@@ -1,0 +1,275 @@
+{extend name="public/qlxbase" /}
+{block name="main"}
+<script src="__PUBLIC__/js/qlx.js"></script>
+<!-- 主题 -->
+<div class="mainbody">
+    <!-- 主体左侧 -->
+    {include file="public/qlxleft" /}
+
+    <!-- 主体右侧 -->
+    <div class="main_right">
+        <div class="main_con">
+            <div class="rcon_title">
+                您当前的位置：系统首页>棋乐轩>购物车
+            </div>
+            {if condition="!empty($list)"}
+            <ul class="clear_shop">
+                <li>
+                    <a href="{:url('qlx/delall')}"><span>清空购物车</span></a>
+                </li>
+                <li class="menu_list_li">
+                    <span>台房结算</span>
+                    <ul class="menu-shop">
+
+                        {if condition="empty($roomlist)"}无数据{else/}
+                        {volist name="roomlist" id="vos"}
+                        <li class="roomid" value="{$vos.id}"><img src="__PUBLIC__/images/yj/icon_sanjiao.png" alt="" /><a>{$vos.kk} {$vos.title}</a></li>
+                        {/volist}
+                        {/if}
+
+                    </ul>
+
+                </li>
+
+            </ul>
+            {/if}
+        </div>
+        <div style="clear: both"></div>
+        <div class="main_content">
+            <table style="border: 1px solid #e5e5e5;width: 100%">
+                <thead>
+                <tr class="sc_shopcar">
+                    <th class="sc_quanx"><input type="checkbox"/><span>全选</span></th>
+                    <th class="sc_shop">商品</th>
+                    <th class="sc_UP">单价</th>
+                    <th class="sc_UP">数量</th>
+                    <th class="sc_UP">小计</th>
+                    <th class="sc_UP">操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="list" id="vo"}
+                <tr class="sc_shopcar_top">
+                    <td class="sc_quanx_top">
+                        <input type="checkbox" />
+                    </td>
+                    <td class="sc_shop_top" >
+                        <img src="__PUBLIC__/images/yj/icon_sp_name.png"/>
+                        <!--<div style="clear: both;"></div>-->
+                        <span>{$vo.title}</span>
+                    </td>
+                    <td class="sc_UP_top_m">{$vo.price}</td>
+                    <input type="hidden" value="{$vo.id}">
+                    <td class="sc_UP_top">
+                        <div class="gw_num_up">
+                            <em class="reduc">-</em>
+                            <input type="text" value="{$vo.count|default=0}" class="number" style="width: 30px;"/>
+                            <em class="add">+</em>
+                        </div>
+                    </td>
+                    <td class="totle sc_UPxj_top">{$vo.total|default=0}</td>
+                    <td class="del sc_delect_top"><a href="">删除</a></td>
+
+                </tr>
+            {/volist}
+                </tbody>
+            </table>
+            {if condition="empty($list)"}
+            <img src="__PUBLIC__/images/yj/xueyuantubiao.png" /> 很抱歉，暂无相关数据！
+            {else/}
+            <div class="shopcar_footer">
+                <div class="zzsc" style="float: left;margin-left: -25px;margin-top: 5px;">
+                    <ul class="page" maxshowpageitem="5" pagelistcount="10" id="page"></ul>
+
+                </div>
+                <div class="sc_js">
+                    <a>已选商品3件</a>
+                    <p>合计:</p><span id="susum">0</span>
+                    <input type="button" id="clear" value="结算"/>
+                    <!--<a href="">结算</a>-->
+
+                </div>
+            </div>
+            {/if}
+        </div>
+        <div style="clear: both"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    var bodyh=document.documentElement.clientHeight;
+    var mainh=bodyh-105;
+    var mleft=document.getElementsByClassName('main_left')[0];
+    var mright=document.getElementsByClassName('main_right')[0];
+    mleft.style.height=mainh+'px';
+    mright.style.height=mainh+'px';
+    var liconpd=(mainh-600)/12;
+    var dls=document.getElementsByClassName('dls');
+    for (var i = 0; i < 7; i++){
+        dls[i].style.paddingTop=liconpd+'px';
+        dls[i].style.paddingBottom=liconpd+'px';
+    }
+    window.onresize = function(){
+        var bodyh=document.documentElement.clientHeight;
+        var mainh=bodyh-105;
+        var mleft=document.getElementsByClassName('main_left')[0];
+        var mright=document.getElementsByClassName('main_right')[0];
+        mleft.style.height=mainh+'px';
+        mright.style.height=mainh+'px';
+        var liconpd=(mainh-600)/12;
+        var dls=document.getElementsByClassName('dls');
+        for (var i = 0; i < 7; i++){
+            dls[i].style.paddingTop=liconpd+'px';
+            dls[i].style.paddingBottom=liconpd+'px';
+        }
+    }
+</script>
+<!--开台信息-->
+<script type="text/javascript">
+    //弹出隐藏层
+    function ShowDiv(show_div,bg_div){
+        document.getElementById(show_div).style.display='block';
+        document.getElementById(bg_div).style.display='block' ;
+        var bgdiv = document.getElementById(bg_div);
+        bgdiv.style.width = document.body.scrollWidth;
+        // bgdiv.style.height = $(document).height();
+        $("#"+bg_div).height($(document).height());
+    };
+    //关闭弹出层
+    function CloseDiv(show_div,bg_div)
+    {
+        document.getElementById(show_div).style.display='none';
+        document.getElementById(bg_div).style.display='none';
+    };
+</script>
+<!--预定信息-->
+<script type="text/javascript">
+    //弹出隐藏层
+    function ShowDivs(show_divs,bg_divs){
+        document.getElementById(show_divs).style.display='block';
+        document.getElementById(bg_divs).style.display='block' ;
+        var bgdivs = document.getElementById(bg_divs);
+        bgdivs.style.width = document.body.scrollWidth;
+        // bgdivs.style.height = $(document).height();
+        $("#"+bg_divs).height($(document).height());
+    };
+    //关闭弹出层
+    function CloseDiv(show_divs,bg_divs)
+    {
+        document.getElementById(show_divs).style.display='none';
+        document.getElementById(bg_divs).style.display='none';
+    };
+</script>
+
+<script>
+    $(function(){
+        var count=$("#susum").html();
+        $("#clear").click(function(){
+            layer.prompt(function(val, index){
+                if (val!=null && val!="")
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: "{:url('qlx/order')}",
+                        data: {'clear_card_id':val,'price':count},
+                        dataType: 'json',
+                        success: function (data) {
+                            // $(obj).parents("tr").remove();
+                            if(data == 1 ){
+                                layer.msg('订单成功!', {icon: 1, time: 1000});
+                            }else{
+                                layer.msg('订单失败!', {icon: 1, time: 1000});
+                            }
+
+                        },
+                        error: function (data) {
+                            console.log(data.msg);
+                        },
+                    });
+                }
+
+                layer.close(index);
+            });
+        })
+        $(".foot_del").click(function(){
+            $(".roomlist").toggle();
+        })
+        //绑定房间
+        $(".roomid").click(function(){
+            var id=$(this).val();
+            if(id==0){
+                layer.msg('请选择房间', {icon: 1});
+                return false;
+            }
+//            layer.confirm('确认要绑定该台房吗？', {
+//                btn: ['确定','取消'] //按钮
+//            }, function(ss){
+//                //alert($('#s option:selected').val());
+//                layer.msg('绑定成功', {icon: 1});
+//            }, function(){
+//                layer.msg('已取消');
+//            });
+//            alert($('#s option:selected').val());
+
+            layer.confirm('确认要绑定该台房吗？', function () {
+                var count=$("#susum").html();
+                $.ajax({
+                    type: 'POST',
+                    url: "{:url('qlx/order')}",
+                    data: {'xid':id,'price':count},
+                    dataType: 'json',
+                    success: function (data) {
+                        //$(obj).parents("tr").remove();
+                        layer.msg('绑定成功!', {icon: 1, time: 1000});
+                    },
+                    error: function (data) {
+                        // console.log(data.msg);
+                        layer.msg('参数异常！请重试');
+                    },
+                });
+            });
+
+        })
+
+
+    })
+
+</script>
+<!--计算页面可视化高度-->
+<script type="text/javascript">
+    var body =$(window).height();
+    var mainbody= body-105;
+    $(function(){
+        window.onload = $('.main_right').css({'height':mainbody+'px'});
+    });
+</script>
+
+
+<script>
+    var chbAll=document.querySelector(
+            "thead th:first-child>input"
+    );
+    var chbs=document.querySelectorAll(
+            "tbody td:first-child>input"
+    );
+    chbAll.onclick=function(){
+        for(var i=0;i<chbs.length;i++){
+            chbs[i].checked=this.checked;
+        }
+    }
+    for(var i=0;i<chbs.length;i++){
+        chbs[i].onclick=function(){
+            if(!this.checked)
+                chbAll.checked=false;
+            else{
+                var unchecked=
+                        document.querySelector(
+                                "tbody td:first-child>input:not(:checked)"
+                        );
+                if(unchecked===null)
+                    chbAll.checked=true;
+            }
+        }
+    }
+</script>
+
+{/block}

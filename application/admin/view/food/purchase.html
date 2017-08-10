@@ -1,0 +1,265 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extraCss.css">
+<script>
+$(function(){
+	$('#page-wrapper').css('paddingTop','20px');
+})
+</script>
+{/block}
+{block name="header"}
+<div class="header cl">
+	<div class="head_left fl">
+		<!--<img class="fl" src="images/login.png">-->
+		<img class="fl" src="__PUBLIC__/images/ctlogo.png" style="margin-top: -12px;margin-left: -25px;">
+	</div>
+	<div class="head_right fr">
+		<a href="#">
+			<dl class="user">
+				<dt></dt>
+				<dd>个人中心</dd>
+			</dl>
+		</a>
+		<a href="#">
+			<dl class="shezhi">
+				<dt></dt>
+				<dd>系统设置</dd>
+			</dl>
+		</a>
+		<a href="{:url('admin/index/logout')}">
+			<dl class="exit">
+				<dt></dt>
+				<dd>退出</dd>
+			</dl>
+		</a>
+	</div>
+</div>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<span>分公司：{$branch['title']} &nbsp;&nbsp;&nbsp;部门：{$department['name']}</span>
+
+
+		<div class="table-responsive clearfix">
+			<table class="table table-hover" style="width:70%;">
+				<thead>
+					<tr>
+						<th>一级分类</th>
+						<th>二级分类</th>
+						<th>规格</th>
+						<th>数量</th>
+					</tr>
+				</thead>
+				<form method="post" name="form1" class="form form-horizontal">
+				<tbody id="tb">
+					<tr>
+						<td>
+							<select name="firstC"  class="form-control firstC" onchange="getC2(this)">
+								<option value="">请选择一级分类</option>
+								{volist name="classify" id="cl"}
+									<option value="{$cl['id']}">{$cl['title']}</option>
+								{/volist}
+							</select>
+						</td>
+						<td>
+							<select name="secendC" class="form-control secendC" onchange="getSpec(this)">
+								<option value="">请选择二级分类</option>
+							</select>
+						</td>
+						<td>
+							<!--<input type="text" class="form-control spec" name='spec' value='' placeholder=''>-->
+							<div class="spec form-control"></div>
+						</td>
+						<td>
+							<input type="text" class="form-control nums" name='num' value='' placeholder='请输入物品数量'>
+						</td>
+					</tr>
+
+				</tbody>
+				</form>
+			</table>
+			<div id="more" style="float:left;cursor:pointer;width:10%;text-align:center;background:#f60;border-radius:16px;padding:6px;12px;color:#fff;">添加更多 <i class="fa fa-plus"></i></div>
+			<div id="reduce" style="float:left;margin-left:15px;cursor:pointer;width:10%;text-align:center;background:#666;border-radius:16px;padding:6px;12px;color:#fff;">删除 <i class="fa fa-minus"></i></div>
+			<div id="sub" style="float:left;margin-left:15px;cursor:pointer;width:10%;text-align:center;background:#f00;border-radius:16px;padding:6px;12px;color:#fff;">提交 <i class="fa fa-check"></i></div>
+		</div>
+	</div>
+</div>
+
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>已提交物料申请</h2>
+		</div>
+		<div class="pull-right">
+			<button class="btn btn-danger ajax-post confirm" url="{:url('purchasedelete')}" target-form="ids">删 除</button>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th>ID</th>
+						<th>一级分类</th>
+						<th>二级分类</th>
+						<th>规格</th>
+						<th>数量</th>
+						<th>状态</th>
+						<th>提交时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="item"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$item['id']}"></td>
+						<td>{$item['id']}</td>
+						<td>{$item['firstC']}</td>
+						<td>{$item['secendC']}</td>
+						<td>{$item['spec']}</td>
+						<td>{$item['num']}</td>
+						<td>
+							{if $item['status'] eq 0}
+							<span class="label label-primary">审核中</span>
+							{elseif $item['status'] eq 1}
+							<span class="label label-primary">已通过</span>
+							{else/}
+							<span class="label label-danger">拒绝</span>
+							{/if}
+						</td>
+						<td>{$item['addtime']|date='Y-m-d',###}</td>
+						<td>
+							<a href="{:url('purchaseedit?id='.$item['id'])}">编辑</a>
+							<a href="{:url('purchasedelete?id='.$item['id'])}" class="confirm ajax-get">删除</a>
+						</td>
+					</tr>
+					{/volist}
+
+				</tbody>
+				
+			</table>
+			{$page}
+		</div>
+	</div>
+</div>
+<script>
+$('#more').click(function(){
+	var trs = $("#tb").find("tr");
+	if(trs.length>20){
+		return false;
+	}
+	var tr = '<tr>'+$("#tb").find("tr:last").html()+'</tr>';
+	$('#tb').append(tr);
+
+})
+$('#reduce').click(function(){
+	var tr = $("#tb").find("tr");
+	if(tr.length<=1){
+		return false;
+	}
+	$("#tb").find("tr:last").remove();
+})
+$('#sub').click(function(){
+    var tr = $('#tb').find('tr');
+    var formArr = [];
+    for(var i=0;i<tr.length;i++){
+    	//console.log(tr.eq(i));
+    	var signlArr = [];
+    	var firstC = tr.eq(i).find('.firstC').val();
+    	var secendC = tr.eq(i).find('.secendC').val();
+    	var num = tr.eq(i).find('.nums').val();
+    	if(!firstC){
+    		$.messager.show('当前表单不能有空项', {placement: 'center',type:'warning',time:3000});
+    		tr.eq(i).find('.firstC').focus();
+    		return false;
+    	}
+    	if(!secendC){
+    		$.messager.show('当前表单不能有空项', {placement: 'center',type:'warning',time:3000});
+    		tr.eq(i).find('.secendC').focus();
+    		return false;
+    	}
+    	var preg = /^[0-9]{1,10}$/;
+	    if(!preg.test(num)){
+	    	tr.eq(i).find('.nums').focus();
+	    	$.messager.show('请输入正确的价格', {placement: 'center',type:'warning',time:3000});
+	    	return false;
+	    }
+    	if(Number(num)<=0){
+    		$.messager.show('数量有误', {placement: 'center',type:'warning',time:3000});
+    		tr.eq(i).find('.nums').focus();
+    		return false;
+    	}
+    	signlArr['firstC'] = firstC;
+    	signlArr['secendC'] = secendC;
+    	signlArr['num'] = num;
+    	formArr.push(signlArr);
+    }
+    var json = {};
+		for(var i=0; i<formArr.length;i++){
+			json[i] = {};
+			for(var key in formArr[i]){
+		  	   json[i][key]=formArr[i][key];
+			}
+		}
+	totalJSON = JSON.stringify(json);
+   	$.post('{:url('purchase')}',{data:totalJSON},function(data){
+      
+      if(data.code == 1){
+      	$.messager.show(data.msg, {placement: 'center',type:'success'});
+      	setTimeout(function(){
+			location.reload();
+		},2000);
+      }else{
+      	$.messager.show(data.msg, {placement: 'center',type:'success'});
+      }
+    });
+})
+function getC2(obj){
+	var id = obj.value;
+	var pid = obj.parentNode.parentNode.rowIndex;
+	$.post('{:url('getC2')}',{id:id,pid:pid},function(data){
+	 //console.log(data);
+      var str = '<select name="secendC" class="form-control secendC" onchange="getSpec(this)">';
+      if(data.classify2.length>0){
+      	for(var i=0;i<data.classify2.length;i++){
+      		if(i==0){
+      			str += '<option selected="selected" value="'+data.classify2[i]['id']+'">'+data.classify2[i]['title']+'</option>';
+      		}else{
+      			str += '<option value="'+data.classify2[i]['id']+'">'+data.classify2[i]['title']+'</option>';
+      		}
+      	}
+      	str += '</select>';
+		var pid = data.pid-1;
+		var valueTb=document.getElementById("tb");
+		var trs = valueTb.rows;
+		var nowTr = trs[pid];
+		var nowTd = nowTr.getElementsByTagName("td")[1];
+		var nTd = nowTr.getElementsByTagName("td")[2];
+		nTd.innerHTML = '<div class="spec form-control">'+data.classify2[0]['spec_id']+'</div>';
+		nowTd.innerHTML = str;
+      }
+    });
+}
+function getSpec(obj){
+	var id = obj.value;
+	var pid = obj.parentNode.parentNode.rowIndex;
+	$.post('{:url('getSpec')}',{id:id,pid:pid},function(data){
+	  	console.log(data);
+		var pid = data.pid-1;
+		var valueTb=document.getElementById("tb");
+		var trs = valueTb.rows;
+		var nowTr = trs[pid];
+		var nTd = nowTr.getElementsByTagName("td")[2];
+		nTd.innerHTML = '<div class="spec form-control">'+data.spec+'</div>';
+    });
+}
+</script>
+{/block}

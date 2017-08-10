@@ -1,0 +1,159 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+<script src="__PUBLIC__/js/echarts.common.min.js"></script>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}(共有订单{$count}笔)</h2>
+		</div>
+		<div class="pull-right">
+			<div class="search-form fr cf"  style="display:inline-block;margin-right:10px;">
+				<div class="sleft" style="border:1px solid #dedede;padding-left:10px;">
+					<input name="starttime" value="" id="stime" placeholder="请选择开始时间" style="border:0;outline:0">
+					<script>
+						$('#stime').fdatepicker({
+							format: 'yyyy-mm-dd',
+							pickTime: false
+						});
+					</script>
+					<input name="endtime" value="" id="etime" placeholder="请选择结束时间" style="border:0;outline:0">
+					<script>
+						$('#etime').fdatepicker({
+							format: 'yyyy-mm-dd',
+							pickTime: false
+						});
+					</script>
+					<a style="margin: 2px 2px 0 0;padding: 0 10px;" href="javascript:;" id="search" url="{:url('allorders')}"><i class="fa fa-search"></i></a>
+				</div>
+			</div>
+			<script>
+				//搜索功能
+				$("#search").click(function(){
+					var url = $(this).attr('url');
+			        var query  = $('.search-form').find('input').serialize();
+			        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+			        query = query.replace(/^&/g,'');
+			        if( url.indexOf('?')>0 ){
+			            url += '&' + query;
+			        }else{
+			            url += '?' + query;
+			        }
+					window.location.href = url;
+				});
+				//回车搜索
+				$("#search-input").keyup(function(e){
+					if(e.keyCode === 13){
+						$("#search").click();
+						return false;
+					}
+				});
+			</script>
+		</div>
+	</header>
+	
+</div>
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h4>开始时间：<font style="color:#f60;">{$dateStart|date='Y年m月d日 H:i:s',###}</font> 结束时间：<font style="color:#f60;">{$dateEnd|date='Y年m月d日 H:i:s',###}</font></h4>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix" style='padding:12px;margin-top:16px;'>
+			<div style="width:45%;float:left;">
+
+				<table  class="table table-hover">
+					<thead>
+						<tr>
+							<th width="60">序号</th>
+							<th>部门名称</th>
+							<th>营收总额</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td>餐厅</td>
+							<td>{$foodSales}</td>
+							<td><a href="{:url('sigleorders?eid=2&starttime='.$dateStart.'&endtime='.$dateEnd)}" style="color:#f60;cursor:pointer;">查看详情</a></td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td>棋乐轩</td>
+							<td>
+							{if $qlxSales}
+							{$qlxSales}
+							{else /}
+							0
+							{/if}
+							</td>
+							<td><a href="{:url('sigleorders?eid=1&starttime='.$dateStart.'&endtime='.$dateEnd)}" style="color:#f60;cursor:pointer;">查看详情</a></td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td>体育馆</td>
+							<td>
+							{if $gymSales}
+							{$gymSales}
+							{else /}
+							0
+							{/if}
+							</td>
+							<td><a href="{:url('sigleorders?eid=3&starttime='.$dateStart.'&endtime='.$dateEnd)}" style="color:#f60;cursor:pointer;">查看详情</a></td>
+						</tr>
+						
+						<tr>
+							<td colspan="4">营收总额:
+							{if $allSales}
+							{$allSales}
+							{else /}
+							0
+							{/if}</td>
+							
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div style="width:45%;float:left;min-height:300px;margin-left:2%;" id="charts">
+			
+			</div>
+
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('charts'));
+
+    // 指定图表的配置项和数据
+    var option = {
+    	
+        title: {
+            text: '各部门销售流水'
+        },
+        tooltip: {},
+        legend: {
+            data:['销量']
+        },
+        xAxis: {
+            data: ["餐厅","棋乐轩","体育馆","总销售额"]
+        },
+        yAxis: {},
+        series: [{
+            name: '销量',
+            type: 'bar',
+            data: [{$foodSales}, {$qlxSales}, {$gymSales},{$allSales}]
+        }]
+    };
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+{/block}

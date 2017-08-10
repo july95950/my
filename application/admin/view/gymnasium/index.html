@@ -1,0 +1,130 @@
+{extend name="public/base"/}
+{block name="body"}
+    <div style="text-align:center;">
+        <button id="all" ><input type="hidden" name="all" value="quan"/>全部</button>
+        <button id="pingpang" ><input type="hidden" name="pingpang" value="pingpang"/>乒乓球</button>
+        <button id="yumao" ><input type="hidden" name="yumao" value="yumao"/>羽毛球</button>
+        <button id="menqiu" ><input type="hidden" name="menqiu" value="menqiu"/>门球</button>
+        <button id="youyong" ><input type="hidden" name="youyong" value="youyong"/>游泳</button>
+        <button id="yujia" ><input type="hidden" name="yujia" value="yujia"/>瑜伽</button>
+        <button id="yuyue" ><input type="hidden" name="yuyue" value="yuyue"/>我要预约</button>
+    </div>
+<div>
+    <ul id="adfgh">
+        {volist name="list" id="vo"}
+         <li style="display:block;width:200px;height:200px;background-color:#AEEEEE;float:left;margin: 0px 50px 20px 0px;">
+             <input type="hidden" id="pid" name="{$vo['pid']}" value="{$vo['pid']}"/>
+                    <div style="text-align: center;" id="rooms">
+                        <a href="{:url('clear?id='.$vo['id'].'&ss='.$vo['ss'])}">
+                            <img src="{$vo.img}" alt="" style="width: 200px;height: 100px;"/>
+                            <span style="font-size:18px;color:#B03060;font-weight:bold;padding:10px;">{$vo.title}</span><br/>
+                            <span>空闲<b>{$vo.kx}</b></span><br/>
+                            <span>使用中<b>{$vo.sy}</b></span><br/>
+                            <span>预留<b>{$vo.yl}</b></span><br/>
+                            <span>价位：{$vo.price}元</span>
+                        </a>
+                    </div>
+                </li>
+        {/volist}
+    </ul>
+
+</div>
+<script>
+    $(function () {
+        $("#all").click(function(){
+            var quan = $("input[name='all']").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('gymnasium/index')}",
+                data: {'name': quan},
+                dataType: 'json',
+                success: function (data) {
+                console.log(data);
+                $(document.body).html(data);
+                }
+            });
+        });
+        $("#pingpang").click(function(){
+            var quan = $("input[name='pingpang']").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('gymnasium/index')}",
+                data: {'name': quan},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    $(document.body).html(data);
+                }
+            });
+        });
+        $("#yumao").click(function(){
+            var quan = $("input[name='yumao']").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('gymnasium/index')}",
+                data: {'name': quan},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                 $(document.body).html(data);
+                }
+            });
+        });
+        $("#menqiu").click(function(){
+            var quan = $("input[name='menqiu']").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('gymnasium/index')}",
+                data: {'name': quan},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                 $(document.body).html(data);
+                }
+            });
+        });
+        $("#youyong").click(function(){
+            var quan = $("input[name='youyong']").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('gymnasium/index')}",
+                data: {'name': quan},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                 $(document.body).html(data);
+                }
+            });
+        });
+        $("#yujia").click(function(){
+            var quan = $("input[name='yujia']").val();
+            $.ajax({
+                type: 'POST',
+                url: "{:url('gymnasium/index')}",
+                data: {'name': quan},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                 $(document.body).html(data);
+                }
+            });
+        });
+        $("#yuyue").click(function(){
+            var quan = $("input[name='yuyue']").val();
+            var pid = $("#pid").val();
+            alert(quan);
+            alert(pid);
+            $.ajax({
+                type: 'POST',
+                url: "{:url('gymnasium/index')}",
+                data: {'name': quan,'pid':pid},
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                 $(document.body).html(data);
+                }
+            });
+        });
+    });
+</script>
+{/block}

@@ -1,0 +1,90 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+		</div>
+		
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="tabs-wrapper">
+			<ul class="nav nav-tabs">
+				
+				<li class="">
+					<a href="{:url('Property/index')}">一级分类</a>
+				</li>
+				<li class="active">
+					<a href="{:url('Property/indexs')}">二级分类</a>
+				</li>
+				
+			</ul>
+			<form action="" class="form" method="post">
+				<table class="table table-striped">
+					<!-- <thead>
+						<tr>
+							<th class="col-lg-2 text-right"></th>
+							<th></th>
+						</tr>
+					</thead> -->
+					<tbody>
+						<!-- <tr>
+							<td class="info col-lg-2 text-right">一级分类</td>
+							<td class="col-lg-10 text-left">
+								<select name="list1" class="form-control" id="class1">
+									<option value="">请选择一级分类</option>
+									{volist name="list1s" id="item"}
+										<option value="{$item['pid']}" {if condition="$info['pid'] eq $item['id']"}selected{/if}>{$item['title']}</option>
+									{/volist}
+								</select>
+							</td>
+						</tr> -->
+						{volist name="list1s" id="item"}
+						<tr>
+							<td class="info col-lg-2 text-right">{$item['title']}</td>
+							<td class="col-lg-10 text-left">
+								{volist name="$item['classify_2']" id="items"}
+								<!--checkbox-nice checkbox-inline-->
+								<div class="checkbox-nice checkbox-inline">
+								<input type="checkbox" name="sid[]" value="{$item['id'].'&'.$items['id']}" id="{$items['id']}" {if in_array($items['id'],$classify2)}checked{/if}/>
+								<label for="{$items['id']}">{$items['title']}</label>
+								</div>
+								{/volist}
+							</td>
+						</tr>
+
+						{/volist}
+						
+					</tbody>
+				</table>
+				<div class="form-group">
+					<div class="col-lg-offset-2 col-lg-10">
+						<!--btn btn-success submit-btn ajax-post" target-form="form-->
+						<button type="submit" class="">确认提交</button>
+						<button class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	$.fn.editable.defaults.mode = 'popup';
+	$.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+	'<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+	$('.editable').editable();
+})
+</script>
+<script type="text/javascript">
+	
+	
+	
+</script>
+{/block}

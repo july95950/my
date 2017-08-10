@@ -1,0 +1,64 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+{/block}
+{block name="body"}
+<div class="main-box no-header clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>申报产品：{$title}</h2>
+		</div>
+		<div class="pull-right">
+			<!-- <a class="btn btn-primary" href="{:url('add')}">确认采购计划</a> -->
+			
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		
+		<!-- 表格列表 -->
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>提出部门</th>
+						<th>需求量</th>
+						<th>提出时间</th>
+						
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="tree" id="list"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>
+						<td class="list_id">{$list['id']}</td>
+						<td class="title">{$list['title']}</td>
+						<td class="all_num">{$list['num_all']}</td>
+						<td class="time">{$list['addtime']|date='Y-m-d',###}</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			
+		</div>
+		<!-- /表格列表 -->
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+	
+</script>
+<script type="text/javascript">
+$(function(){
+	$.fn.editable.defaults.mode = 'popup';
+	$.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+	'<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+	$('.editable').editable();
+	
+})
+</script>
+{/block}

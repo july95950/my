@@ -1,0 +1,29 @@
+
+	<table class="table table-hover" >
+		<thead>
+			<tr>
+				<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+				<th width="60">ID</th>
+				<th>名称</th>
+				<th>库存</th>
+				<th>规格</th>
+				<th>添加出库</th>
+				
+			</tr>
+		</thead>
+		<tbody>
+			{volist name="tree" id="list"}
+			<tr>
+				<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>
+				<td class="id">{$list['id']}</td>
+				<td class="title">{$list['title']}</td>
+				<td class="num">{$list['num']}</td>
+				<td class="spec">{$list['spec']}</td>
+				<td><span style="background-color: #f0f0f0;padding: 0.5em" id="{$list['id']}" class="choice">出库</span></td>
+			</tr>
+			{/volist}
+		</tbody>						    
+	</table>
+	<div class="F_Page">
+		{$page}
+	</div>

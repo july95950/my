@@ -1,0 +1,95 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+{/block}
+{block name="body"}
+<div class="main-box no-header clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>全部产品</h2>
+		</div>
+		<div class="pull-right">
+			<a class="btn btn-primary" href="javascript:void(0)" onclick="submits()">确认采购计划</a>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		
+		<!-- 表格列表 -->
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>名称</th>
+						<th>需求量</th>
+						<th>库存量</th>
+						<th>阈值</th>
+						<th>计划采购量</th>
+						
+					</tr>
+				</thead>
+				<tbody id="tbody">
+					{volist name="tree" id="list"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>
+						<td class="list_id">{$list['id']}</td>
+						<td class="title">{$list['title']}</td>
+						<td class="all_num">{$list['all_num']}</td>
+						<td class="inventory">{$list['inventory']}</td>
+						<td class="down">{$list['down']}</td>
+						<td><input type="number" class="number" name="number" value="{$list['jihua']}"></td>
+						<td>
+							<a title="编辑" href="{:url('detail?secendC='.$list['secendC'].'&title='.$list['title'])}">查看详情</a>
+							<!-- <a title="删除" href="{:url('remove?id='.$list['id'])}" class="confirm ajax-get">删除</a> --> 
+						</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			
+		</div>
+		<!-- /表格列表 -->
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+	function submits(){
+		var title = $('.title');
+		var number = $('.number');
+		var title_arr = new Array();
+		var title_all = new Array();
+		var num_arr = new Array();
+		for(var i=0;i<title.length;i++){
+			if(number.eq(i).val() != 0){
+				num_arr.push(number.eq(i).val());
+				title_arr.push(title.eq(i).html());
+			}
+		}
+		title.each(function(index){
+			title_all.push(title.eq(index).html());
+		})
+
+		$.post('{:url('add')}',{title_arr:title_arr,title_all:title_all,num_arr:num_arr},function(data){
+			if(data.msg == 1){
+				location.reload();
+			}
+			//console.log(data);
+		})
+		//console.log(title_all);
+		//console.log(num_arr);
+	}
+</script>
+<script type="text/javascript">
+$(function(){
+	$.fn.editable.defaults.mode = 'popup';
+	$.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+	'<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+	$('.editable').editable();
+	
+})
+</script>
+{/block}

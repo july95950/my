@@ -1,0 +1,81 @@
+{extend name="public/base"/}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{:isset($info['id'])?'编辑':'新增'}器械</h2>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<form action="{:url()}" method="post" class="form form-horizontal">
+			<div class="tabs-wrapper">
+				<ul class="nav nav-tabs">
+					<li class="active">
+						<a href="#tab-base" data-toggle="tab">基 础</a>
+					</li>
+
+				</ul>
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="tab-base">
+						<div class="form-group">
+							<label class="col-lg-2 control-label">器械名称</label>
+							<div class="col-lg-8">
+								<input type="text" name="name" class="form-control" value="{$info.name|default=''}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label">器械规格</label>
+							<div class="col-lg-8">
+								<input type="text" name="spec" class="form-control" value="{$info.spec|default=''}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label">器械价格</label>
+							<div class="col-lg-8">
+								<input type="text" name="price" class="form-control" value="{$info.price|default=''}">
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-lg-2 control-label">器械数量</label>
+							<div class="col-lg-8">
+								<input type="text" name="margin" class="form-control" value="{$info.margin|default=''}">
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-lg-10">
+					<input type="hidden" name="id" value="{$info['id']|default=''}">
+					<button type="submit" class="btn btn-success submit-btn ajax-post" target-form="form">确认提交</button>
+					<button class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{/block}
+
+{block name="script"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/plugs/webuploader/webuploader.css">
+<script type="text/javascript" src="__PUBLIC__/plugs/webuploader/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/plugs/webuploader/webuploader.custom.js"></script>
+<script type="text/javascript">
+	{present name="info['id']"}
+	JunYu.setValue("allow_publish", {$info.allow_publish|default=1});
+	JunYu.setValue("check", {$info.check|default=0});
+
+
+	JunYu.setValue("display", {$info.display|default=1});
+	JunYu.setValue("reply", {$info.reply|default=0});
+
+	{/present}
+	$(function(){
+		$("input[name=reply]").change(function(){
+			var $reply = $(".form-group.reply");
+			parseInt(this.value) ? $reply.show() : $reply.hide();
+		}).filter(":checked").change();
+	});
+</script>
+{/block}

@@ -1,0 +1,149 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/foodsell.css"/>
+<script src="__PUBLIC__/js/interface.js"></script>
+<script src="__PUBLIC__/js/card.js"></script>
+{/block}
+{block name="body"}
+
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="60">ID</th>
+						<th>员工姓名</th>
+						<th>性别</th>
+						<th>电话</th>
+						<th>内部卡ID</th>
+						<th>部门</th>
+						<th>分公司</th>
+						<th>公司账户余额</th>
+						<th>个人账户余额</th>
+						<th>注册时间</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="item"}
+					<tr>
+						<td>{$item['uid']}</td>
+						<td>{$item['username']}</td>
+						<td>
+							{if $item['sex'] eq 0}
+							男
+							{else/}
+							女
+							{/if}
+						</td>
+						<td>
+							{if $item['mobile'] == ''}
+							暂无
+							{else /}
+							{$item['mobile']}
+							{/if}
+						</td>
+						<td id="td{$item['uid']}">
+							{if $item['cardNo'] == ''}
+							暂未绑定
+							{else /}
+							{$item['cardNo']}
+							{/if}
+						</td>
+						<td>{$item['department']}</td>
+						<td>{$item['branch']}</td>
+						<td>{$item['companyRecharge']}</td>
+						<td>{$item['personalRecharge']}</td>
+						<td>{$item['reg_time']|date='Y-m-d',###}</td>
+						<td>
+							<span class="bind badge badge-success" data="{$item['uid']}"  style="padding:6px;cursor:pointer;">绑 卡</span>
+							<a class="record badge badge-danger" href="{:url('staffCardRecord?id='.$item['uid'])}" style="padding:6px;margin-left:6px;cursor:pointer;color:#fff;">绑定记录</a>
+						</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+	</div>
+</div>
+
+<div class="orderBox">
+	<div class="orderInnerBox" style="height:150px; margin-top:200px;">
+		<div style="font-size:20px;margin:50px auto;text-align:center;">
+			<span>内部卡号：</span>
+			<input type="text" id="cardman" class="form-control" style="display:inline-block;width:auto;" placeholder="请刷卡">
+			<input type="hidden" class="form-control" style="background:#fff;border:0;" disabled id="msgs" value="">
+			<input type="hidden" class="form-control" style="background:#fff;border:0;" disabled id="idBox" value="">
+			<span class="badge badge-success" style="font-size:16px;cursor:pointer;" onclick="sub()">确 认</span>
+			<span class="badge badge-danger" style="font-size:16px;cursor:pointer;" onclick="cancelBtn()">取 消</span>
+		</div>
+	</div>
+</div>
+<script>
+$(function(){
+	var sWeight = document.body.clientWidth;
+	var sHeight = document.body.clientHidth;
+	$('.orderBox').css('width',sWeight);
+	$('.orderBox').css('height',sHeight);
+})
+$('.bind').click(function(){
+	var mansid = $(this).attr('data');
+	$('#idBox').val(mansid);
+	$('.orderBox').show();
+	$('#sub').attr('data,');
+	document.getElementById('cardman').value = '';
+	getCard();
+})
+function cancelBtn(){
+	$('.orderBox').hide();
+	clearInterval(timer);
+	Disconnect();
+}
+//读卡器初始化
+var msg = document.getElementById('msgs');
+var msgCardNO = document.getElementById('cardman');
+
+function getCard(){
+ 	Findcards();
+ 	window.timer = setInterval('Findcards()',1000);
+}
+function Findcards()
+{
+	$('#msgs').val('');
+	Connect();
+    Findcard();
+}
+function sub(){
+	var id = $('#idBox').val();
+	var cardid = $('#cardman').val();
+	if(!id){
+		alert('未知错误，请重试');
+		return false;
+	}
+	if(!cardid){
+		alert('卡号为空');
+		$('#cardman').focus();
+		return false;
+	}
+	$.post('{:url('staffinfo')}',{id:id,cardid:cardid},function(data){
+          console.log(data);
+          if(data.code == 1){
+          	$('#td'+data.id).html(data.cardid);
+          	$('.orderBox').hide();
+			clearInterval(timer);
+			Disconnect();
+          }else{
+          	alert(data.msg);
+          }
+    });
+}
+</script>
+{/block}

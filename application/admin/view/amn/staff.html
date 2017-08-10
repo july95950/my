@@ -1,0 +1,101 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+{/block}
+{block name="body"}
+<div class="clearfix main-box">
+	<div class="main-box-body clearfix">
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-2 col-sm-3">
+				<select name="id" id="branch" class="form-control">
+					<option value="">请选择分公司</option>
+					{volist name="branch" id="br"}
+						<option value="{$br['id']}">{$br['title']}</option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-2 col-sm-3">
+				<select name="department" id="department" class="form-control" disabled>
+					<option value="">请选择部门</option>
+				</select>
+			</div>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-2 col-sm-3">
+				<div class="btn btn-primary" onclick="mana()">员工分配</div>
+				<script>
+				function mana(){
+					var departmentId = $('#department option:selected').val();
+					if(!departmentId){
+						alert('请选择部门');
+						return false;
+					}
+					//alert(departmentId);
+					location.href="{:url('staffmanage')}"+'?departmentId='+departmentId;
+				}
+				</script>
+			</div>
+		</div>
+	</div>
+
+</div>
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}（未分配员工）</h2>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="60">ID</th>
+						<th>员工名</th>
+						<th>性别</th>
+						<th>电话</th>
+						<th>邮箱</th>
+						<th>注册时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="item"}
+					<tr>
+						<td>{$item['uid']}</td>
+						<td>{$item['username']}</td>
+						<td>
+							{if $item['sex'] eq 0}
+							男
+							{else/}
+							女
+							{/if}
+						</td>
+						<td>{$item['mobile']}</td>
+						<td>{$item['email']}</td>
+						<td>{$item['reg_time']|date='Y-m-d',###}</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+	</div>
+</div>
+<script>
+$('#branch').change(function(){
+	//alert($(this).val());
+	var id = $(this).val();
+	$.post('{:url('getdepartment')}',{id:id},function(data){
+      //console.log(data);
+      $('#department').attr('disabled',false);
+      var str = '<option value="">请选择部门</option>';
+      for(var i=0;i<data.length;i++){
+      	str += '<option value="'+data[i].id+'">'+data[i].name+'</option>'
+      }
+      $('#department').html(str);
+    });
+})
+</script>
+{/block}

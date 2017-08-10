@@ -1,0 +1,128 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+<style>
+.branchBox{float:left;padding:6px 12px;border-radius:24px;background:#f60;margin-left:16px;color:#fff;cursor:pointer;}
+</style>
+{/block}
+{block name="body"}
+<div class="main-box clearfix search-form" style="padding:20px;">
+	<form name="form1">
+	<div class="col-lg-2 col-sm-3">
+		<select name="vips" id="vips" class="form-control" style="padding:0">
+			<option value="">请选择卡类型</option>
+			<option value="00">普通卡</option>
+			<option value="01">贵宾卡</option>
+		</select>
+	</div>
+	<div class="col-lg-2 col-sm-3">
+		<select name="status" id="status" class="form-control" style="padding:0">
+			<option value="">请选择卡状态</option>
+			<option value="0">预制中</option>
+			<option value="1">已关联</option>
+			<option value="2">已绑定</option>
+		</select>
+	</div>
+	<div class="col-lg-2 col-sm-3">
+		<input name="starttime" value="" class="form-control" id="stime" placeholder="请选择开始时间">
+		<script>
+			$('#stime').fdatepicker({
+				format: 'yyyy-mm-dd',
+				pickTime: false
+			});
+		</script>
+	</div>
+	<div class="col-lg-2 col-sm-3">
+		<input name="endtime" value="" class="form-control" id="etime" placeholder="请选择结束时间">
+		<script>
+			$('#etime').fdatepicker({
+				format: 'yyyy-mm-dd',
+				pickTime: false
+			});
+		</script>
+	</div>
+	<div class="col-lg-1 col-sm-2">
+		<a style="" href="javascript:;" id="search" url="{:url('cardinfo')}"><i class="fa fa-search form-control"></i></a>
+	</div>
+	</form>
+</div>
+<script>
+	//搜索功能
+	$("#search").click(function(){
+		var url = $(this).attr('url');
+        var query  = $('form').serialize();
+        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+        query = query.replace(/^&/g,'');
+        if( url.indexOf('?')>0 ){
+            url += '&' + query;
+        }else{
+            url += '?' + query;
+        }
+		window.location.href = url;
+	});
+	
+</script>
+<div class="main-box clearfix" id="infoBox">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+		</div>
+		<div class="pull-right">
+			<button class="btn btn-danger ajax-post confirm"  url="{:url('makeCardDelete')}" target-form="ids">删 除</button>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>外制卡号</th>
+						<th>制式</th>
+						<th>状态</th>
+						<th>内制卡号</th>
+						<th>操作</th>
+						<th>添加时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="item"}
+
+					<tr id="tr{$item['id']}">
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$item['id']}"></td>
+						<td>{$item['id']}</td>
+						<td>{$item['outercard']}</td>
+						<td>
+							{if $item['vip'] eq '00'}
+							<span class="label label-info">普通卡</span>
+							{elseif $item['vip'] eq '01'}
+							<span class="label label-warning">贵宾卡</span>
+							{/if}
+						</td>
+						<td>
+							{if $item['status'] eq 0}
+							<span class="label label-danger">预制</span>
+							{elseif $item['status'] eq 1}
+							<span class="label label-info">已关联</span>
+							{else /}
+							<span class="label label-primary">已绑定</span>
+							{/if}
+						</td>
+						<td class="innertd">{$item['innercard']}</td>
+						<td >
+							<a class="badge badge-danger" onclick="if(confirm('确定删除?')==false)return false;" style="padding:6px;color:#fff;" href="{:url('makeCardDelete?id='.$item['id'])}">删 除</a>
+						</td>
+						<td>{$item['addtime']|date='Y-m-d',###}</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+	</div>
+</div>
+{/block}

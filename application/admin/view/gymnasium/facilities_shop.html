@@ -1,0 +1,112 @@
+{extend name="public/base"/}
+{block name="body"}
+<form action="{:url()}" method="post" class="form form-horizontal">
+    <div style="text-align:center;">
+        <span id="button4" style="margin-right:30px;"><input type="radio" name="status" id="male3" value="4" checked><label for="male3" style="color:orange;font-size:20px;">全部</label></span>
+        <input type="text" value="" placeholder="请输入商品名称查询" />
+        <input type="button" value="搜索">
+    </div>
+</form>
+<div class="main-box-body clearfix">
+    <!-- 表格列表 -->
+    <div class="table-responsive clearfix">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <!--<th width="30"><input class="checkbox check-all" type="checkbox"></th>-->
+                <th width="60">产品序号</th>
+                <th>产品名称</th>
+                <th width="120">产品单价</th>
+                <th width="120">产品余量</th>
+                <th width="120">数量选择</th>
+                <th>产品租赁</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="list"}
+            <tr>
+                <!--<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>-->
+                <td class="xh">{$list['id']}</td>
+                <td>{$list['name']}</td>
+                <td>{$list['price']}元/小时</td>
+                <td>{$list['margin']}</td>
+                <td><div class="num"><span class="reduc">&nbsp;-&nbsp;</span><input class="nums" type="text" value="0" size="5"/><span class="add">&nbsp;+ </span></div></td>
+                <td ><a title="购物" class="cart" data-id="{$list['id']}" >添加到租赁车</a></td>
+            </tr>
+            {/volist}
+            </tbody>
+        </table>
+    </div>
+    <!-- /表格列表 -->
+</div>
+<script>
+
+    $(function() {
+
+        $(".cart").click(function(){
+
+            var counts=$(this).parent().prev().children().children().next().val();
+
+            var xh=$(this).attr('data-id');
+
+            var status = 2;
+            location.href="__HOME__/gymnasium/facilities_cart?goods_id="+xh+"&count="+counts+"&status="+status;
+
+        })
+
+        //加
+
+        $(".add").each(function() {
+
+            $(this).click(function() {
+
+                var $multi = 0;
+
+                var vall = $(this).prev().val();
+
+                vall++;
+
+                $(this).prev().val(vall);
+
+
+
+            })
+
+
+
+        })
+
+        //减
+
+        $(".reduc").each(function() {
+
+            $(this).click(function() {
+
+                var $multi1 = 0;
+
+                var vall1 = $(this).next().val();
+
+                vall1--;
+
+                if(vall1 <= 1) {
+
+                    vall1 = 1;
+
+                }
+
+                $(this).next().val(vall1);
+
+
+
+            })
+
+
+
+        })
+
+    });
+
+
+
+</script>
+{/block}

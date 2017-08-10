@@ -1,0 +1,46 @@
+﻿.zzsc {
+	width: 350px;
+	height: 80px;
+	margin: 0 auto;
+	margin-top: 15px;
+
+}
+
+.page {
+	list-style: none;
+}
+
+.page>li {
+	float: left;
+	padding: 5px 10px;
+	cursor: pointer;
+}
+
+.page .pageItem {
+	border: solid thin #DDDDDD;
+	margin: 5px;
+	color: #fff;
+	background-color: #c9c9c9;
+}
+.page .pageItem:last-child{
+	background-color: #8291ae;
+} 
+.page .pageItemActive {
+	/*border: solid thin #0099FF;*/
+	margin: 5px;
+	background-color: #c9c9c9;
+	color: #fff;
+}
+
+.page .pageItem:hover {
+	border: solid thin #0099FF;
+	background-color: #0099FF;
+	color: white;
+}
+
+.page .pageItemDisable {
+	border: solid thin #DDDDDD;
+	margin: 5px;
+	color: #fff;
+	background-color: #cca259;
+}

@@ -1,0 +1,164 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/checkbox1.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/plugs/webuploader/webuploader.css">
+<!-- datepicker statr -->
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+<link href="__PUBLIC__/plugs/ueditor/themes/default/css/ueditor.min.css" rel="stylesheet" type="text/css">
+<!-- 配置文件 -->
+<script type="text/javascript" src="__PUBLIC__/plugs/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__PUBLIC__/plugs/ueditor/ueditor.all.min.js"></script>
+<style>
+#stulist li,#stulist1 li{list-style-type:none;float:left;padding:6px 12px;}
+</style>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+		</div>
+		<div class="pull-right">
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<form method="post" name="form1" class="form form-horizontal">
+			<div class="form-group">
+				<label class="col-lg-2 control-label">菜品名称</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" id="foodname" class="form-control " name="foodname" value="">
+					<div class="help-block">请输入菜品名称</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-2 control-label">菜品所属分类</label>
+				<div class="col-lg-8 col-sm-10">
+					<ul id="stulist">
+						{volist name="foodclass" id="item"}
+							<li class="col-lg-1 col-sm-2"><input class="stus regular-checkbox" id="checkbox{$item['id']}" type="checkbox" name="foodclass[]" value="{$item['id']}"/><label for="checkbox{$item['id']}">{$item['title']}</li>
+						{/volist}
+					</ul>
+
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 control-label">价格</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" id="price" class="form-control " name="price" value="" maxlength="10">
+					<div class="help-block">请输入菜品价格</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-2 control-label">上传图片</label>
+				<div class="col-lg-8 col-sm-10">
+					<div class="picker-box">
+						<div id="picker_{$field}" class="picker_button">上传图片</div>
+						{if isset($value) && $value}
+						<input type="hidden" name="{$field}" id="field_{$field}" value="{$value}">
+						{else/}
+						<input type="hidden" name="{$field}" id="field_{$field}" value="">
+						{/if}
+						<div id="fileList_{$field}" class="upload-file-list-info" style="width:280px;">
+							{if isset($value) && $value}
+							{php}
+							$images = get_cover($value);
+							{/php}
+							<li class="affix-list-item" id="WU_FILE_0">
+								<div class="upload-file-info">
+									<span class="webuploader-pick-file-close" data-queued-id="WU_FILE_0" data-id="{$value}" data-fileurl="{$images['path']}"><i class="close"></i></span>
+									<span class="fname"></span>
+									<span class="fsize">上传时间:{$images['create_time']|date='Y-m-d H:i:s',###}</span>
+									<div class="clearfix"></div>
+								</div>
+								<div class="filebox image">
+									<img src="{:config('base_url')}{$images['path']}" class="img-responsive">
+								</div>
+							</li>
+							{/if}
+						</div>
+					</div>
+					<script type="text/javascript">
+						uploadsize =  2;
+						$(function(){
+							$("#picker_{$field}").JunYuUploader({
+									fileNumLimit:1,
+									uploadEvents: {
+										uploadComplete:function(file){}
+									},
+									listName : 'fileList_{$field}',
+									hiddenName: 'field_{$field}',
+									hiddenValType:1,
+									fileSingleSizeLimit:uploadsize*1024*1024,
+									closeX:true
+								},
+								{
+									fileType: 'service',
+									filename : 'images',
+								});
+						});
+					</script>
+					<div class="help-block">请上传菜品图片</div>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-2 control-label">是否启用</label>
+				<div class="col-lg-8 col-sm-10">
+					<div class="radio radio-nice radio-inline">
+								<input type="radio" name="status" id="status-1" value="1" checked>
+								<label for="status-1">启用</label>
+							</div>
+							<div class="radio radio-nice radio-inline">
+								<input type="radio" name="status" id="status-0" value="0">
+								<label for="status-0">禁用</label>
+							</div>
+					</div>
+			</div>
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-lg-10">
+					
+					<button class="btn btn-success submit-btn ajax-post" target-form="form-horizontal">确 定</button>        
+					<div class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+$(".submit-btn").click(function(){
+    if(!$('#foodname').val()){
+    	$.messager.show('请输入菜品名称', {placement: 'center',type:'warning',time:3000});
+    	return false;
+    }
+    if(!$('#price').val()){
+    	$('#price').focus();
+    	$.messager.show('请输入价格', {placement: 'center',type:'warning',time:3000});
+    	return false;
+    }
+    var num = $('#price').val();
+    var preg = /^[0-9]{1,10}$/;
+    if(!preg.test(num)){
+    	$('#price').focus();
+    	$.messager.show('请输入正确的价格', {placement: 'center',type:'warning',time:3000});
+    	return false;
+    }
+    if(Number(num)<=0){
+    	$('#price').focus();
+    	$.messager.show('请输入正确的价格', {placement: 'center',type:'warning',time:3000});
+    	return false;
+    }
+    document.form1.submit();
+});
+
+</script>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/plugs/webuploader/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/plugs/webuploader/webuploader.custom.js"></script>
+{/block}

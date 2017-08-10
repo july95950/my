@@ -1,0 +1,299 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<script src="__PUBLIC__/js/jquery.cookie.js"></script>
+<script src="__PUBLIC__/js/interface.js"></script>
+<script src="__PUBLIC__/js/card.js"></script>
+
+{/block}
+{block name="body"}
+<div class="clearfix main-box">
+	<div class="main-box-body clearfix">
+		<div class="form-group" style="margin-top:20px;">
+			<label class="col-lg-1 control-label" style="margin-top:8px;">单卡预制:</label>
+			<div class="col-lg-1 col-sm-2">
+				<select name="vip" id="vip" class="form-control" style="padding:0">
+					
+					<option value="00" selected="selected">普通卡</option>
+					<option value="01">贵宾卡</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-sm-3">
+				<input type="text" class="form-control" id="outercard" name="outercard" placeholder="请输入8位数字外置卡号" maxlength='8' value="" size="15">
+			</div>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-1 col-sm-2">
+				<div class="btn btn-primary" onclick="oneMake()">预 制</div>
+			</div>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<label class="col-lg-1 control-label" style="margin-top:8px;">批量卡预制:</label>
+			<div class="col-lg-1 col-sm-2">
+				<select name="vips" id="vips" class="form-control" style="padding:0">
+					
+					<option value="00" selected="selected">普通卡</option>
+					<option value="01">贵宾卡</option>
+				</select>
+			</div>
+			<div class="col-lg-2 col-sm-3">
+				<input type="text" class="form-control" id="startNo" placeholder="请输入8位数字外置起始卡号" name="startNo"  maxlength='8' value="" size="15">
+			</div>
+			<div class="col-lg-2 col-sm-3">
+				<input type="text" class="form-control" id="endNo" placeholder="请输入8位数字外置终止卡号" name="endNo"  maxlength='8' value="" size="15">
+			</div>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-1 col-sm-2">
+				<div class="btn btn-primary" onclick="moreMake()">批 量 预 制</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>预制卡列表</h2>
+		</div>
+		<div class="pull-right">
+			<div id="msgs"></div>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="form-group" style="margin-top:20px;">
+			<label class="col-lg-1 control-label" style="margin-top:8px;">信息展示:</label>
+			<div class="col-lg-2 col-sm-3">
+				<input type="text" class="form-control" disabled id="TxtArea" placeholder="提醒消息" size="15">
+			</div>
+			<div class="col-lg-2 col-sm-3">
+				<input type="text" class="form-control" disabled id="CardNO" placeholder="内置卡号"  size="15">
+			</div>
+			<div class="col-lg-3 col-sm-5">
+				<input type="text" class="form-control" disabled id="CardWRData" placeholder="写入信息" size="15">
+			</div>
+			<div class="col-lg-3 col-sm-5">
+				<input type="text" class="form-control" disabled id="CardRDData" placeholder="已写入信息"  size="15">
+			</div>
+			<input type="button" id="reading" value="验证" class="btn btn-primary" name="btn_Read" onclick="Read()">
+			<input type="hidden" id="exNumber">
+		</div>
+	</div>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="60">ID</th>
+						<th>外制卡号</th>
+						<th>制式</th>
+						<th>状态</th>
+						<th>内制卡号</th>
+						<th>操作</th>
+						<th>添加时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="item"}
+					<tr id="tr{$item['id']}">
+						<td>{$item['id']}</td>
+						<td>{$item['outercard']}</td>
+						<td>
+							{if $item['vip'] eq '00'}
+							<span class="label label-info">普通卡</span>
+							{elseif $item['vip'] eq '01'}
+							<span class="label label-warning">贵宾卡</span>
+							{/if}
+						</td>
+						<td>
+							{if $item['status'] eq 0}
+							<span class="label label-danger">预制</span>
+							{elseif $item['status'] eq 1}
+							<span class="label label-info">已关联</span>
+							{else /}
+							<span class="label label-primary">已绑定</span>
+							{/if}
+						</td>
+						<td class="innertd"><input type="text" disabled class="innercard form-control" value="{$item['innercard']}"></td>
+						<td data="{$item['writedata']}">
+							<span class="makes badge badge-success" style="padding:6px;">制 卡</span>
+							<span class="associate badge badge-success" style="padding:6px;margin-left:6px;">关 联</span>
+							<span class="sub badge badge-success" data="{$item['id']},{$item['outercard']}" style="padding:6px;margin-left:6px;">存 储</span>
+						</td>
+						<td>{$item['addtime']|date='Y-m-d',###}</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+	</div>
+</div>
+
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>今日关联卡列表</h2>
+		</div>
+		<div class="pull-right">
+			<div id="msgs"></div>
+		</div>
+	</header>
+	
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="60">ID</th>
+						<th>外制卡号</th>
+						<th>制式</th>
+						<th>状态</th>
+						<th>内制卡号</th>
+						<th>操作</th>
+						<th>添加时间</th>
+					</tr>
+				</thead>
+				<tbody id="isDone">
+					{volist name="list1" id="item"}
+					<tr id="tr{$item['id']}">
+						<td>{$item['id']}</td>
+						<td>{$item['outercard']}</td>
+						<td>
+							{if $item['vip'] eq '00'}
+							<span class="label label-info">普通卡</span>
+							{elseif $item['vip'] eq '01'}
+							<span class="label label-warning">贵宾卡</span>
+							{/if}
+						</td>
+						<td>
+							{if $item['status'] eq 0}
+							<span class="label label-danger">预制</span>
+							{elseif $item['status'] eq 1}
+							<span class="label label-primary">已关联</span>
+							{else /}
+							<span class="label label-primary">已绑定</span>
+							{/if}
+						</td>
+						<td class="innertd"><input type="text" disabled class="innercard form-control" value="{$item['innercard']}"></td>
+						<td>
+							<a class="badge badge-danger" onclick="if(confirm('确定删除?')==false)return false;" style="padding:6px;color:#fff;" href="{:url('makeCardDelete?id='.$item['id'])}">删 除</a>
+						</td>
+						<td>{$item['addtime']|date='Y-m-d',###}</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			
+		</div>
+	</div>
+</div>
+<script>
+//读卡器初始化
+var msg = document.getElementById('TxtArea');
+var msgCardNO = document.getElementById('CardNO');
+var msgCardRDData = document.getElementById('CardRDData');
+var msgCardWRData = document.getElementById('CardWRData');
+
+function oneMake(){
+	var outercard = $('#outercard').val();
+	var vip = $('#vip').val();
+	//alert(vip);
+	if(!vip){
+		alert('请选择制式');
+		$('#vip').focus();
+		return false;
+	}
+	var reg = /^[0-9]{8}$/;
+	if(!reg.test(outercard)){
+		alert('外制卡号输入有误');
+		$('#outercard').focus();
+		return false;
+	}
+	$.post('{:url('makecard')}',{outercard:outercard,vip:vip},function(data){
+		console.log(data);
+		if(data.code == 1){
+			location.reload();
+		}else{
+			alert(data.msg);
+		}
+	});
+}
+
+function moreMake(){
+	var startNo = $('#startNo').val();
+	var endNo = $('#endNo').val();
+	var vips = $('#vips').val();
+	if(!vips){
+		alert('请选择制式');
+		$('#vips').focus();
+		return false;
+	}
+	var regs = /^[0-9]{8}$/;
+	if(!regs.test(startNo)){
+		alert('外置卡号输入有误');
+		$('#startNo').focus();
+		return false;
+	}
+	if(!regs.test(endNo)){
+		alert('外置卡号输入有误');
+		$('#endNo').focus();
+		return false;
+	}
+	if(Number(startNo)>=Number(endNo)){
+		alert('请确认终止卡号大于起始卡号');
+		return false;
+	}
+	var diff = Number(endNo)-Number(startNo);
+	if(diff>200){
+		alert('请确认连续号码不超过200');
+		return false;
+	}
+	$.post('{:url('makecard')}',{startNo:startNo,endNo:endNo,vips:vips},function(data){
+		//console.log(data);
+		if(data.code == 1){
+			location.reload();
+		}else{
+			alert(data.msg);
+		}
+	});
+
+}
+
+$('.makes').click(function(){
+	//alert($(this).attr('data'));
+	$('#TxtArea').val('');
+	$('#CardNO').val('');
+	$('#CardRDData').val('');
+	$('#CardWRData').val('');
+	$('#CardWRData').val($(this).parent().attr('data'));
+	Connect();
+	Write();
+})
+$('.associate').click(function(){
+	num = $('#CardNO').val();
+	$(this).parent().siblings('.innertd').find('.innercard').val(num);
+})
+$('.sub').click(function(){
+	var str = $(this).attr('data');
+	var innercard = $(this).parent().siblings('.innertd').find('.innercard').val();
+	if(innercard != 0){
+		$.post('{:url('storecard')}',{str:str,innercard:innercard},function(data){
+			//console.log(data);
+			if(data.code == 1){
+				$('#tr'+data.id).fadeOut();
+				$.post('{:url('storecardajax')}',{},function(data){
+					//console.log(data);
+					$('#isDone').html(data);
+				});
+			}else{
+				alert(data.msg);
+			}
+		});
+		}else{
+			alert('内部卡号有误');
+			return false;
+		}
+})
+</script>
+{/block}

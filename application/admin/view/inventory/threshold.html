@@ -1,0 +1,143 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/foodsell.css"/>
+{/block}
+{block name="body"}
+<div class="main-box no-header clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>全部产品</h2>
+		</div>
+		<div class="pull-right">
+			<a class="btn btn-primary" href="{:url('add')}"><i class="fa fa-plus-circle fa-lg"></i> 添加入库产品</a>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		
+		<!-- 表格列表 -->
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>名称</th>
+						<th>库存</th>
+						<th>阈值</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="tree" id="list"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>
+						<td class="id">{$list['id']}</td>
+						<td class="title">{$list['title']}</td>
+						<td class="num">{$list['num']}</td>
+						<td class="down">{$list['down']}</td>
+						<td>
+							<a title="设置阈值" href="javascript:void(0)" class="set_th">设置阈值</a>
+						</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+		<!-- /表格列表 -->
+	</div>
+</div>
+<div class="orderBox">
+	<div class="orderInnerBox">
+		<div style="font-size:20px;margin:20px; auto;text-align:center;">设置阈值</div>
+		<table class="table" style="margin-top:20px;width:80%;margin-left:10%;background:#fff">
+				<tbody>
+				<tr>
+					<th>设置产品:</th>
+					<td><input type="text" class="subprice" name="title" value="" id = "titles"></td>
+				</tr>
+				<tr>
+					<th>库存:</th>
+					<td><input type="text" class="subfood" name="num" value="" id="nums"></td>
+				</tr>
+				<tr>
+					<th>阈值:</th>
+					<td class="ends"><button onclick="min()">-</button><input type="num" class="subman"  style="text-align: center" id="downs"><button onclick="add()">+</button></td>
+				</tr>
+				<input type="hidden" name="ids" value="" id="ids">
+				
+
+			</tbody>
+		</table>
+		<div style="font-size:20px;margin:0 auto;text-align:center;">
+			<button class="sub" onclick="sub()">确 认</button>
+			<button class="cancelOrder" onclick="cancelOrder()">取 消</button>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+<script>
+	$('.set_th').click(function(){
+		var title = $(this).parent().siblings('.title').html();
+		var num = $(this).parent().siblings('.num').html();
+		var down = $(this).parent().siblings('.down').html();
+		var id = $(this).parent().siblings('.id').html();
+		$('#titles').val(title);
+		$('#nums').val(num);
+		$('#downs').val(down);
+		$('#ids').val(id);
+		$('.orderBox').show();
+	})
+	function cancelOrder(){
+		$('.orderBox').hide();
+	}
+
+	function min(){
+		var t = $('#downs');
+		t.val(parseInt(t.val())-1);
+		
+		if(t.val() <= 1){
+			t.val(1);
+		}
+	}
+	function add(){
+		
+		var t = $('#downs');   
+        t.val(parseInt(t.val())+1);  
+	}
+	function sub(){
+		var title = $('#titles').val();
+		var num = $('#nums').val();
+		var down = $('#downs').val();
+		var id = $('#ids').val();
+		$.post('{:url('th_set')}',{id:id,down:down},function(data){
+			if(data.code == 1){
+				alert(data.msg);
+				location.reload();
+			}else{
+				alert(data.msg);
+				location.reload();
+			}
+		})
+		
+		$('.orderBox').hide();
+	}
+</script>
+<script type="text/javascript">
+$(function(){
+	$.fn.editable.defaults.mode = 'popup';
+	$.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+	'<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+	$('.editable').editable();
+
+	var sWeight = document.body.clientWidth;
+	var sHeight = document.body.clientHidth;
+	$('.orderBox').css('width',sWeight);
+	$('.orderBox').css('height',sHeight);
+	
+})
+</script>
+{/block}

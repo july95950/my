@@ -1,0 +1,158 @@
+{extend name="public/qlxbase" /}
+{block name="main"}
+<!-- 主题 -->
+<div class="mainbody">
+    <!-- 主体左侧 -->
+    {include file="public/qlxleft" /}
+
+
+    <!-- 主体右侧 -->
+    <div class="main_right">
+        <div class="main_con">
+            <div class="rcon_title">
+                您当前的位置：系统首页>棋乐轩>商品销售
+            </div>
+
+            <div class="xsqb_search">
+                <ul class="search_icon_left">
+                    <li class="qb"><img src="__PUBLIC__/images/yj/xsqb.png" alt="" /><a href="">全部</a></li>
+                    <li class="yinl"><img src="__PUBLIC__/images/yj/xsyl.png" alt="" /><a href="">饮料</a></li>
+                    <li class="yinl"><img src="__PUBLIC__/images/yj/xssp.png" alt="" /><a href="">食品</a></li>
+                    <li class="yinl"><img src="__PUBLIC__/images/yj/xsqt.png" alt="" /><a href="">其他</a></li>
+                </ul>
+                <form  action="{:url('shop')}" method="post" class="search_icon_right">
+                    <div class="rcon_search_ss cl">
+                        <input type="text" name="names" value="{$title}" placeholder="请输入商品名称查询" />
+                        <input type="submit" value="搜索">
+                    </div>
+                </form>
+                <div style="clear: both;"></div>
+            </div>
+
+        </div>
+        <!--<div style="clear: both"></div>-->
+        <div class="main_content_xs">
+            <table style="border: 1px solid #e5e5e5;width: 100%">
+                <tbody>
+                <tr class="xs_title">
+                    <th class="xs_paix">排序</th>
+                    <th class="xs_name">名称</th>
+                    <th class="xs_danjia">单价</th>
+                    <th class="xs_lei">余量</th>
+                    <th class="xs_num">数量选择</th>
+                    <th class="xs_lei">购买</th>
+                </tr>
+
+
+                {volist name="list" id="list"}
+
+                <tr class="xs_title_tops">
+                    <td class="xs_paix_top">{$list['id']}</td>
+                    <td class="xs_name_top" >{$list['title']}</td>
+                    <td class="xs_danjia_top">{$list['out_price']}</td>
+                    <td class="xs_lei_top">{$list['num']}</td>
+                    <td class="xs_num_top">
+                        <div class="gw_num">
+                            <em class="reduc">-</em>
+                            <input type="text" class="nums" value="1" class="number" style="width: 30px;"/>
+                            <em class="add">+</em>
+                        </div>
+
+                    </td>
+                    <td class="xs_lei_top"><a title="购物" class="cart" data-id="{$list['id']}" >添加到购物车</a></td>
+                </tr>
+
+                {/volist}
+
+
+                </tbody>
+            </table>
+            {if condition="empty($list['id'])"}该商品暂无{/if}
+
+            <div class="zzsc" style="float: right;">
+                {$page}
+            </div>
+        </div>
+
+    </div>
+</div>
+<script type="text/javascript">
+    var bodyh=document.documentElement.clientHeight;
+    var mainh=bodyh-105;
+    var mleft=document.getElementsByClassName('main_left')[0];
+    var mright=document.getElementsByClassName('main_right')[0];
+    mleft.style.height=mainh+'px';
+    mright.style.height=mainh+'px';
+    var liconpd=(mainh-600)/12;
+    var dls=document.getElementsByClassName('dls');
+    for (var i = 0; i < 7; i++){
+        dls[i].style.paddingTop=liconpd+'px';
+        dls[i].style.paddingBottom=liconpd+'px';
+    }
+    window.onresize = function(){
+        var bodyh=document.documentElement.clientHeight;
+        var mainh=bodyh-105;
+        var mleft=document.getElementsByClassName('main_left')[0];
+        var mright=document.getElementsByClassName('main_right')[0];
+        mleft.style.height=mainh+'px';
+        mright.style.height=mainh+'px';
+        var liconpd=(mainh-600)/12;
+        var dls=document.getElementsByClassName('dls');
+        for (var i = 0; i < 7; i++){
+            dls[i].style.paddingTop=liconpd+'px';
+            dls[i].style.paddingBottom=liconpd+'px';
+        }
+    }
+</script>
+<!--购物车加减效果-->
+<script type="text/javascript">
+
+    $(function() {
+        $(".cart").click(function(){
+            var counts=$(this).parent().prev().children().children().next().val();
+            var xh=$(this).attr('data-id');
+            if(counts<1){
+                layer.msg('请填写数量后提交!', {icon: 1, time: 2000});
+            }else{
+                location.href="__HOME__/qlx/cart?goods_id="+xh+"&count="+counts;
+            }
+
+        })
+        //加
+        $(".add").each(function() {
+            $(this).click(function() {
+                var $multi = 0;
+                var vall = $(this).prev().val();
+                vall++;
+                $(this).prev().val(vall);
+
+            })
+
+        })
+        //减
+        $(".reduc").each(function() {
+            $(this).click(function() {
+                var $multi1 = 0;
+                var vall1 = $(this).next().val();
+                vall1--;
+                if(vall1 <= 1) {
+                    vall1 = 1;
+                }
+                $(this).next().val(vall1);
+
+            })
+
+        })
+    });
+
+
+</script>
+<!--计算页面可视化高度-->
+<script type="text/javascript">
+    var body =$(window).height();
+    var mainbody= body-105;
+    $(function(){
+        window.onload = $('.main_right').css({'height':mainbody+'px'});
+    });
+</script>
+{/block}

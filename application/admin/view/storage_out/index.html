@@ -1,0 +1,343 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/foodsell.css"/>
+{/block}
+{block name="body"}
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<div class="main-box no-header clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>全部产品</h2>
+		</div>
+		<div class="pull-right">
+			<!-- <a class="btn btn-primary" href="{:url('add')}"><i class="fa fa-plus-circle fa-lg"></i> 出库</a> -->
+		</div>
+	</header>
+	<div class="main-box-body clearfix" >
+		<div class="table-responsive clearfix">
+		
+		<div class="form-group" style="margin-top:20px;">
+		<!-- <label class="col-lg-1 control-label" style="margin-top:8px;">按类别筛选:</label> -->
+			<div class="col-lg-2 col-sm-3">
+				<select name="className" id="className1" class="form-control">
+					<option value="">一级分类</option>
+					{volist name="p_Classify" id="item"}
+					<option value="{$item['id']}" {if condition="$info['classify_1'] eq $item['id']"}selected{/if}>{$item['title']}</option>
+					{/volist}
+					
+				</select>
+			</div>
+			<div class="col-lg-2 col-sm-3">
+				<select name="className" id="className2" class="form-control">
+					
+					
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-1 control-label" style="margin-top:8px;width: 8.5em">产品名称:</label>
+			<div class="col-lg-2 col-sm-3">
+			<input type="text" name="title" class="form-control" id="se_title">
+			</div>	
+		</div>
+		
+		<div class="btn btn-primary" onclick="chaxun()">查 询</div>
+		</div>
+		<!-- 表格列表 -->
+		<div class="table-responsive clearfix" style="width: 50%;float: left;" id="allinfo">
+	<table class="table table-hover" >
+		<thead>
+			<tr>
+				<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+				<th width="60">ID</th>
+				<th>名称</th>
+				<th>库存</th>
+				<th>规格</th>
+				<th>添加出库</th>
+				
+			</tr>
+		</thead>
+		<tbody id='tbody'>
+			{volist name="tree" id="list"}
+			<tr>
+				<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>
+				<td class="id">{$list['id']}</td>
+				<td class="title">{$list['title']}</td>
+				<td class="num">{$list['num']}</td>
+				<td class="spec">{$list['spec']}</td>
+				<td><span style="background-color: #f0f0f0;padding: 0.5em" id="{$list['id']}" class="choice">出库</span></td>
+			</tr>
+			{/volist}
+		</tbody>						    
+	</table>
+	<div class="F_Page">
+		{$page}
+	</div>
+</div>
+		<!-- /表格列表 -->
+		<div class="table-responsive clearfix" style="width: 48%;float: left;background-color: #91532C;margin-top: 2.4em">
+			<table>
+				<div class="tab-pane fade in active" id="tab-base">	
+					<div class="form-group">
+						<label class="col-lg-2 control-label">领取人</label>
+						<div class="col-lg-4">
+							<input type="text" name="title" class="form-control" value="" id="out_person">
+						</div>
+					</div>	
+				</div>
+						
+				<div class="tab-pane fade in active" id="tab-base">	
+					<div class="form-group">
+						<label class="col-lg-2 control-label">领取时间</label>
+						<div class="col-lg-4">
+							<input type="date" name="create_time" class="form-control" value="" id="out_time">
+						</div>
+					</div>	
+				</div>
+
+				
+				<div class="tab-pane fade in active" id="tab-end">	
+						
+				</div>
+				<div style="font-size:20px;margin:0 auto;text-align:center;">
+					<button class="sub" onclick="submits()">确 认</button>
+					<button class="cancelOrder" onclick="cancelOrder()">取 消</button>
+					<button class="cancelOrder" onclick="remove_all()">清 空</button>
+				</div>
+			</table>
+			
+
+		</div>
+	</div>
+</div>
+<div class="orderBox">
+	<div class="orderInnerBox">
+		<div style="font-size:20px;margin:20px; auto;text-align:center;">出库</div>
+		<table class="table" style="margin-top:20px;width:80%;margin-left:10%;background:#fff">
+				<tbody>
+				<tr>
+					<th>出库产品:</th>
+					<td><input type="text" class="subprice" name="title" value="" id = "titles"></td>
+				</tr>
+				<tr>
+					<th>规格:</th>
+					<td><input type="text" class="subfood" name="spec" value="" id="specs"></td>
+				</tr>
+				<tr>
+					<th>数量:</th>
+					<td class="ends"><button onclick="min()">-</button><input type="num" class="subman" value="1" style="text-align: center" id="nums"><button onclick="add()">+</button></td>
+				</tr>
+				<input type="hidden" name="nums" value="" id="allNum">
+				<input type="hidden" name="ids" value="" id="ids">
+				
+
+			</tbody>
+		</table>
+		<div style="font-size:20px;margin:0 auto;text-align:center;">
+			<button class="sub" onclick="sub()">确 认</button>
+			<button class="cancelOrder" onclick="cancelOrder()">取 消</button>
+		</div>
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+
+<script>
+	$('#className1').change(function(){
+		var id = $(this).val();
+			$.post("{:url('storage/find_classily')}",{id:id},function(data){
+				console.log(data);
+				var html = '';
+				for(var i=0;i<data.length;i++){
+					html+='<option value="'+data[i]['id']+'" {if condition="$info['classify_2'] eq $item['id']"}selected{/if}>'+data[i]['title']+'</option>';
+				}
+				$('#className2').html(html);
+           
+          	});
+	})
+	//查询
+	function chaxun(){
+		
+		var classfy = $('#className2').val();
+		var title = $('#se_title').val();
+		$.post('{:url('find_product')}',{classfy:classfy,title:title},function(data){
+			if(data.code == 0){
+				alert(data.msg);
+			}else{
+				//console.log(data.body);
+				var htmls = '';
+				for(var i=0;i<data.body.length;i++){
+					htmls += '<tr><td><input class="ids row-selected" type="checkbox" name="id[]" value="'+data.body[i]['id']+'"></td><td class="id">'+data.body[i]['id']+'</td><td class="title">'+data.body[i]['title']+'</td><td class="num">'+data.body[i]['num']+'</td><td class="spec">'+data.body[i]['spec']+'</td><td><span style="background-color: #f0f0f0;padding: 0.5em" id="'+data.body[i]['id']+'" onclick="choices('+data.body[i]['id']+')">出库</span></td></tr>';
+				}
+				$('#tbody').html(htmls);	
+			}
+		})
+	}
+
+	$('.choice').click(function(){
+		var title = $(this).parent().siblings('.title').html();
+		var spec = $(this).parent().siblings('.spec').html();
+		var num = $(this).parent().siblings('.num').html();
+		var ids = $(this).parent().siblings('.id').html();
+		$('#titles').val(title);
+		$('#specs').val(spec);
+		$('#allNum').val(num);
+		$('#ids').val(ids);
+		$('.orderBox').show();
+		
+	})
+	function choices(id){
+		//alert(id);
+		$.post('{:url('find_search')}',{id:id},function(data){
+			var title = data.title;
+			var spec = data.spec;
+			var num = data.num;
+			var ids = data.id;
+			$('#titles').val(title);
+			$('#specs').val(spec);
+			$('#allNum').val(num);
+			$('#ids').val(ids);
+			$('.orderBox').show();
+		})
+	}
+	window.onbeforeunload = function(){  
+	    var str1 = window.location.href;
+	    str1 = str1.substring(str1.lastIndexOf("/") + 1);
+	    var html1 = $('#tab-end').html();
+	    localStorage.setItem(str1,html1); 
+	}  
+	function cancelOrder(){
+		$('.orderBox').hide();
+	}
+
+	function min(){
+		var num1 = $('#nums').val();
+		var num_min = num1 - 1;
+		$('#nums').val(num_min);
+		if($('#nums').val() <= 1){
+			$('#nums').val(1);
+		}
+	}
+	function add(){
+		
+		var t=$('#nums');   
+        t.val(parseInt(t.val())+1);  
+		var allNum = $('#allNum').val();
+
+		if(t.val() >= parseInt(allNum)){
+			t.val(allNum);
+		}
+	}
+
+	function remove_all(){
+		var all = $('.items');
+		if(all.length >=1){
+			all.each(function(index){
+				all.eq(index).remove();
+			})
+		}
+		
+	}
+	function sub(){
+		var title = $('#titles').val();
+		var spec = $('#specs').val();
+		var nums = $('#nums').val();
+		var allNum = $('#allNum').val();
+		var ids = $('#ids').val();
+		var items = $('.items');
+		
+		
+		if(items.length >=1){
+
+			$('.items:last-child').after("<tr class='items' id='xuanze"+ids+"'><td class='title'>"+title+"</td><td class='spec'>"+spec+"</td><td class='nums'>"+nums+"</td><td onclick='dels("+ids+")'>删除</td></tr>");
+
+			$('.items').each(function(index){
+				var titles=$('.items').eq(index).find('.title').html();
+				if(items.eq(index).find('.title').html() == title){
+					var num = parseInt(items.eq(index).find('.nums').html()) + parseInt(nums);
+					items.eq(index).find('.nums').html(num);
+					$('.items:last-child').remove();
+					$('.orderBox').hide();
+				}
+			})	
+
+		}else{
+
+			$('#tab-end').append("<tr class='items' id='xuanze"+ids+"'><td class='title'>"+title+"</td><td class='spec'>"+spec+"</td><td class='nums'>"+nums+"</td><td onclick='dels("+ids+")'>删除</td></tr>");
+		}
+		
+		
+		$('.orderBox').hide();
+	}
+	function dels(index){
+		$('#xuanze'+index).remove();
+	}
+	
+	function submits(){
+		var person = $('#out_person').val();
+		var time = $('#out_time').val();
+		var sub_item = $('.items');
+		var title =new Array();
+		var num =new Array();
+		var spec =new Array();
+
+		sub_item.each(function(index){
+			title.push(sub_item.eq(index).find('.title').html());
+			num.push(sub_item.eq(index).find('.nums').html());
+			spec.push(sub_item.eq(index).find('.spec').html());
+		})
+		JSON.stringify(title);
+		JSON.stringify(num);
+		JSON.stringify(spec);
+
+		$.post('{:url('storage_out')}',{title:title,num:num,spec:spec,person:person,time:time},function(data){
+			//console.log(data);
+			if(data.code == -1){
+				alert(data.title+data.msg);
+			}else if(data.code == 1 && data.info == 1){
+				alert(data.msg);
+				remove_all();
+				clear();
+			    function clear(){
+					if(confirm("要打印小票吗？"))
+					return true;
+					if(true){
+						location.href="{:url('')}";
+					}
+				}
+
+
+
+
+
+			}
+		})
+
+	}
+</script>
+<script type="text/javascript">
+$(function(){
+	//clears();
+	
+	$.fn.editable.defaults.mode = 'popup';
+	$.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+	'<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+	$('.editable').editable();
+
+	var sWeight = document.body.clientWidth;
+	var sHeight = document.body.clientHidth;
+	$('.orderBox').css('width',sWeight);
+	$('.orderBox').css('height',sHeight);
+
+	var str1 = window.location.href;
+	str1 = str1.substring(str1.lastIndexOf("/") + 1);
+	var h1 = localStorage.getItem(str1);
+	$('#tab-end').html(h1);
+	
+	
+
+})
+</script>
+{/block}

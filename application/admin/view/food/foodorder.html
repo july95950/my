@@ -1,0 +1,124 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extraCss.css">
+<script>
+$(function(){
+	$('#page-wrapper').css('paddingTop','20px');
+})
+</script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+{/block}
+{block name="header"}
+<div class="header cl">
+	<div class="head_left fl">
+		<!--<img class="fl" src="images/login.png">-->
+		<img class="fl" src="__PUBLIC__/images/ctlogo.png" style="margin-top: -12px;margin-left: -25px;">
+	</div>
+	<div class="head_right fr">
+		<a href="#">
+			<dl class="user">
+				<dt></dt>
+				<dd>个人中心</dd>
+			</dl>
+		</a>
+		<a href="#">
+			<dl class="shezhi">
+				<dt></dt>
+				<dd>系统设置</dd>
+			</dl>
+		</a>
+		<a href="{:url('admin/index/logout')}">
+			<dl class="exit">
+				<dt></dt>
+				<dd>退出</dd>
+			</dl>
+		</a>
+	</div>
+</div>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}(共有订单{$count}笔)</h2>
+		</div>
+		<div class="pull-right">
+			<div class="search-form fr cf"  style="display:inline-block;margin-right:10px;">
+				<div class="sleft" style="border:1px solid #dedede;padding-left:10px;">
+					<input name="starttime" value="" id="stime" placeholder="请选择开始时间" style="border:0;outline:0">
+					<script>
+						$('#stime').fdatepicker({
+							format: 'yyyy-mm-dd',
+							pickTime: false
+						});
+					</script>
+					<input name="endtime" value="" id="etime" placeholder="请选择结束时间" style="border:0;outline:0">
+					<script>
+						$('#etime').fdatepicker({
+							format: 'yyyy-mm-dd',
+							pickTime: false
+						});
+					</script>
+					<a style="margin: 2px 2px 0 0;padding: 0 10px;" href="javascript:;" id="search" url="{:url('foodorder')}"><i class="fa fa-search"></i></a>
+				</div>
+			</div>
+			<script>
+				//搜索功能
+				$("#search").click(function(){
+					var url = $(this).attr('url');
+			        var query  = $('.search-form').find('input').serialize();
+			        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+			        query = query.replace(/^&/g,'');
+			        if( url.indexOf('?')>0 ){
+			            url += '&' + query;
+			        }else{
+			            url += '?' + query;
+			        }
+					window.location.href = url;
+				});
+				//回车搜索
+				$("#search-input").keyup(function(e){
+					if(e.keyCode === 13){
+						$("#search").click();
+						return false;
+					}
+				});
+			</script>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="60">ID</th>
+						<th>订单号</th>
+						<th>菜品</th>
+						<th>价格</th>
+						<th>操作人</th>
+						<th>结算卡号</th>
+						<th>创建时间</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="item"}
+					<tr>
+						<td>{$item['id']}</td>
+						<td>{$item['order_id']}</td>
+						<td>{$item['foodname']}</td>
+						<td>{$item['price']}</td>
+						<td>{$item['operate_id']}</td>
+						<td>{$item['clear_card_id']}</td>
+						<td>{$item['create_time']|date='Y-m-d H:i:s',###}</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+	</div>
+</div>
+{/block}

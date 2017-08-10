@@ -1,0 +1,130 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+{/block}
+{block name="body"}
+<div class="main-box no-header clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>对外采购</h2>
+		</div>
+		<div class="pull-right">
+			<a class="btn btn-primary" href="javascript:void(0)" onclick="submits()">确认全部</a>
+			<div class="search-form fr cf"  style="display:inline-block;margin-right:10px;">
+				<div class="sleft" style="border:1px solid #dedede;padding-left:10px;">
+					<input type="text" id="search-input" name="pro" style="border:0;outline:0;height:30px;" value="" placeholder="请输入产品名称">
+					<a style="margin: 2px 2px 0 0;padding: 0 10px;" href="javascript:;" id="search" url="{:url('out_buy')}"><i class="fa fa-search"></i></a>
+				</div>
+			</div>
+			<script>
+				//搜索功能
+				$("#search").click(function(){
+					var url = $(this).attr('url');
+			        var query  = $('.search-form').find('input').serialize();
+			        query = query.replace(/(&|^)(\w*?\d*?\-*?_*?)*?=?((?=&)|(?=$))/g,'');
+			        query = query.replace(/^&/g,'');
+			        if( url.indexOf('?')>0 ){
+			            url += '&' + query;
+			        }else{
+			            url += '?' + query;
+			        }
+					window.location.href = url;
+				});
+				//回车搜索
+				$("#search-input").keyup(function(e){
+					if(e.keyCode === 13){
+						$("#search").click();
+						return false;
+					}
+				});
+			</script>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		
+		<!-- 表格列表 -->
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>名称</th>
+						<th>采购量</th>
+						<th>状态</th>
+						<th>操作</th>
+						
+					</tr>
+				</thead>
+				<tbody id="tbody">
+					{volist name="tree" id="list"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>
+						<td class="list_id">{$list['id']}</td>
+						<td class="title">{$list['title']}</td>
+						<td class="all_num">{$list['num']}</td>
+						<td>
+							{if $list['status'] eq 0}
+							<span class="label label-primary">未同意</span>
+							{else/}
+							<span class="label label-primary">已同意</span>
+							{/if}
+						</td>
+						<td>
+							{if $list['status'] eq 0}
+							<a title="编辑" href="{:url('sure_outBuy?id='.$list['id'].'&type=0')}"><button>同意</button></a>
+							{else/}
+							<a title="编辑" href="{:url('sure_outBuy?id='.$list['id'].'&type=1')}"><button>取消</button></a>
+							{/if}
+							<a title="删除" href="{:url('outBuy_remove?id='.$list['id'])}" class="confirm ajax-get"><button>删除</button></a> 
+						</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+		<!-- /表格列表 -->
+	</div>
+</div>
+
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+	function submits(){
+		var title = $('.title');
+		var number = $('.number');
+		var title_arr = new Array();
+		var title_all = new Array();
+		var num_arr = new Array();
+		for(var i=0;i<title.length;i++){
+			if(number.eq(i).val() != 0){
+				num_arr.push(number.eq(i).val());
+				title_arr.push(title.eq(i).html());
+			}
+		}
+		title.each(function(index){
+			title_all.push(title.eq(index).html());
+		})
+
+		$.post('{:url('add')}',{title_arr:title_arr,title_all:title_all,num_arr:num_arr},function(data){
+			if(data.msg == 1){
+				location.reload();
+			}
+			//console.log(data);
+		})
+		//console.log(title_all);
+		//console.log(num_arr);
+	}
+</script>
+<script type="text/javascript">
+$(function(){
+	$.fn.editable.defaults.mode = 'popup';
+	$.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+	'<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+	$('.editable').editable();
+	
+})
+</script>
+{/block}

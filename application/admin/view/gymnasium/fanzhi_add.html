@@ -1,0 +1,99 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/checkbox1.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/plugs/webuploader/webuploader.css">
+<!-- datepicker statr -->
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+<link href="__PUBLIC__/plugs/ueditor/themes/default/css/ueditor.min.css" rel="stylesheet" type="text/css">
+<!-- 配置文件 -->
+<script type="text/javascript" src="__PUBLIC__/plugs/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__PUBLIC__/plugs/ueditor/ueditor.all.min.js"></script>
+<style>
+    #stulist li,#stulist1 li{list-style-type:none;float:left;padding:6px 12px;}
+</style>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+    <header class="main-box-header clearfix">
+        <div class="pull-left">
+            <h2>{$meta_title}</h2>
+        </div>
+        <div class="pull-right">
+        </div>
+    </header>
+    <div class="main-box-body clearfix">
+        <form method="post" name="form1" class="form form-horizontal">
+            <div class="form-group">
+                <label class="col-lg-2 control-label">品名</label>
+                <div class="col-lg-8 col-sm-10">
+                    <input type="text" id="name" class="form-control " name="name" value="">
+                    <div class="help-block">请输入品名</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label">数量</label>
+                <div class="col-lg-8 col-sm-10">
+                    <input type="text" id="num" class="form-control " name="num" value="">
+                    <div class="help-block">请输入数量</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label">最高上限</label>
+                <div class="col-lg-8 col-sm-10">
+                    <input type="text" id="max_num" class="form-control " name="max_num" value="">
+                    <div class="help-block">请输入最高上限</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-lg-2 control-label">最低下限</label>
+                <div class="col-lg-8 col-sm-10">
+                    <input type="text" id="min_num" class="form-control " name="min_num" value="">
+                    <div class="help-block">请输入最低下限</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg-2 control-label">部门</label>
+                <div class="col-lg-8 col-sm-10">
+                    <input type="text" id="area_id" class="form-control " name="area_id" value="">
+                    <div class="help-block">请输入部门</div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+
+                    <button class="btn btn-success submit-btn ajax-post" target-form="form-horizontal">确 定</button>
+                    <div class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(".submit-btn").click(function(){
+
+
+        for(var i=0;i<document.form1.elements.length-1;i++){
+            if(document.form1.elements[i].value=="")
+            {
+                alert("当前表单不能有空项");
+                document.form1.elements[i].focus();
+                return false;
+            }
+        }
+
+
+        document.form1.submit();
+    });
+
+</script>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/plugs/webuploader/webuploader.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/plugs/webuploader/webuploader.custom.js"></script>
+{/block}

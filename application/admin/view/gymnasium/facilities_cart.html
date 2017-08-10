@@ -1,0 +1,254 @@
+{extend name="public/base"/}
+
+{block name="body"}
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/qlx.css"/>
+
+<script src="__PUBLIC__/js/tyg.js"></script>
+
+
+
+<div id="box">
+
+    <div id="content_box">
+
+        <div class="imfor_top" style="width: 100%;float: left;">
+
+            <div class="check_top">
+
+                <input type="checkbox" id="all" />全选
+
+            </div>
+
+            <div class="pudc_top" style="width: 400px;">商品</div>
+
+            <div class="pices_top">单价</div>
+
+            <div class="num_top">数量</div>
+
+            <div class="totle_top">合计</div>
+
+            <div class="del_top" style="width: 120px;">操作</div>
+
+        </div>
+
+        {volist name="list" id="vo"}
+
+        <div class="imfor"  style="width: 100%;float: left;">
+
+            <div class="check">
+                <input type="checkbox" class="Each" />
+
+            </div>
+
+            <div class="pudc" style="width: 400px;">{$vo.title}</span>
+
+            </div>
+
+            <div class="pices"  id="susum">{$vo.price}</div>
+
+            <input type="hidden" value="{$vo.id}">
+
+            <div class="num"><span class="reduc">&nbsp;-&nbsp;</span><input type="text" value="{$vo.count|default=0}" style="text-align: center;"/><span class="add">&nbsp;+</span></div>
+
+            <div class="totle">{$vo.total|default=0}</div>
+
+            <div style="width: 120px;">
+            <a class="del">删除</a>
+
+            </div>
+        </div>
+        {/volist}
+    </div>
+    {if condition="empty($list)"}
+    暂无相关数据
+    {else/}
+    <div class="foot">
+        <div class="foot_add"><a href="{:url('gymnasium/facilities_delall')}"><button>清空租赁车</button></a></div>
+        <div class="foot_del"><button>台房绑定</button></div>
+
+        <div class="foot_huan" id="huan" style="float: right;cursor: pointer;width: 50px;margin-top: 14px;margin-left: 10px;"><button>还回</button></div>
+        <div class="foot_cash" id="clear" style="margin-left: 10px;width: 50px;"><button>租赁</button></div>
+
+
+    </div>
+    {/if}
+</div><br/>
+
+<div class="roomlist" style="margin-left:30%;width:60%;display:none;">
+
+
+    <div class="">
+
+        <select name="hide" id="s" class="form-control">
+
+            <option  selected = "selected" value="0">台房绑定列表</option>
+
+            {if condition="empty($roomlist)"}无数据{else/}
+
+            {volist name="roomlist" id="vos"}
+
+            <option value="{$vos.id}" >{$vos.kk} -- {$vos.title}</option>
+
+            {/volist}
+
+            {/if}
+
+        </select>
+
+    </div>
+
+    <input id="sure" type="button" value="确定" />
+
+</div>
+<br>
+<div class="foothuan" style="margin-left:30%;width:60%;display:none;">
+
+</div>
+
+<script>
+
+
+    function huanhui(){
+        var clear= $(".clear").html().split(":");
+        var price= $(".clear_price").html().split(":");
+        var prices = price[1].split("/");
+        var clears = clear[1];
+        var pricess = prices[0];
+        var status = 1;
+        if(pricess !=null && pricess != ''){
+                $.ajax({
+                    type: 'POST',
+                    url: "{:url('gymnasium/facilities_order')}",
+                    data: {'clear_card_id':clears,'price':pricess,'status':status},
+                    dataType: 'json',
+                    success: function (data) {
+                        if(data == 1 ){
+                            layer.msg('还回成功!', {icon: 1, time: 1000});
+                            window.location.href = "{url('gymnasium/index')}";
+                        }else{
+                            layer.msg('还回失败!', {icon: 1, time: 1000});
+                        }
+                    },
+                    error: function (data) {
+                        console.log(data.msg);
+                    },
+                });
+        }
+    }
+
+    $(function(){
+
+        var count=$("#susum").html();
+
+        $("#clear").click(function(){
+
+            layer.prompt(function(val, index){
+
+                if (val!=null && val!="")
+
+                {
+                    var status = 2;
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{:url('gymnasium/facilities_order')}",
+                        data: {'create_card_id':val,'price':count,'status':status},
+                        dataType: 'json',
+                        success: function (data) {
+                            // $(obj).parents("tr").remove();
+                            if(data == 1 ){
+                                layer.msg('租赁成功!', {icon: 1, time: 1000});
+                            }else{
+                                layer.msg('租赁失败!', {icon: 1, time: 1000});
+                            }
+                        },
+                        error: function (data) {
+                            console.log(data.msg);
+                        },
+                    });
+                }
+                layer.close(index);
+            });
+        });
+        $("#huan").click(function(){
+
+            layer.prompt(function(val, index){
+
+                if (val!=null && val!="")
+
+                {
+                    var status = 2;
+
+                    $.ajax({
+                        type: 'POST',
+                        url: "{:url('gymnasium/facilities_huan')}",
+                        data: {'clear_card_id':val,'status':status},
+                        dataType: 'json',
+                        success: function (data) {
+                            if(data.price == "0"){
+                                layer.msg('卡号错误!', {icon: 1, time: 1000});
+                                return false;
+                            }
+                            if(data.price != "0") {
+                                var clear_card_id = data.create_card_id;
+                                var date = new Date(parseInt(data.create_time) * 1000).toLocaleString().substr(11);
+                                var time = new Date(parseInt(data.clear_time) * 1000).toLocaleString().substr(11);
+                                var divs = "<div>" +
+                                    "<li>订单号:" + data.order_id + "</li>" +
+                                    "<li>租赁卡号:" + data.create_card_id + "</li>" +
+                                    "<li>租赁时间:" + date + "</li>" +
+                                    "<li  class='clear_price'>租赁价格:" + data.price + "/元</li>" +
+                                    "<li class='time'>还回时间:" + time + "</li>" +
+                                    "<li class='clear'>还回卡号:" + clear_card_id + "</li>" +
+                                    "<input id='huanhui' type='button' onclick='huanhui()' value='结算'/>" +
+                                    "</div>";
+                                $(".foothuan").html(divs); //把内容入到这个div中即完成
+                            }
+                        },
+                        error: function (data) {
+
+                        },
+                    });
+                }
+                layer.close(index);
+            });
+        });
+        $(".foot_del").click(function(){
+
+            $(".roomlist").toggle();
+
+        });
+        $(".foot_huan").click(function(){
+
+            $(".foothuan").toggle();
+
+        });
+
+        $("#sure").click(function(){
+            var id=$('#s option:selected').val();
+            if(id==0){
+                layer.msg('请选择房间', {icon: 1});
+                return false;
+            }
+            layer.confirm('确认要绑定该台房吗？', function () {
+                var count=$("#susum").html();
+                $.ajax({
+                    type: 'POST',
+                    url: "{:url('gymnasium/facilities_order')}",
+                    data: {'xid':id,'price':count},
+                    dataType: 'json',
+                    success: function (data) {
+                        layer.msg('绑定成功!', {icon: 1, time: 1000});
+                    },
+                    error: function (data) {
+                        layer.msg('参数异常！请重试');
+                    },
+                });
+            });
+        })
+    })
+
+</script>
+
+{/block}

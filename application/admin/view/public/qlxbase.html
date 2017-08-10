@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>开台首页</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<link href="__PUBLIC__/css/yj/bootstrap.min.css" rel="stylesheet">
+	<link href="__PUBLIC__/css/yj/style.css" rel="stylesheet">
+	<link href="__PUBLIC__/css/yj/mystyle.css" rel="stylesheet">
+	<link rel="stylesheet" href="__PUBLIC__/css/yj/page.css" />
+	<script src="__PUBLIC__/js/yj/jquery-1.9.1.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC__/js/yj/page.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC__/js/yj/index.js" type="text/javascript" charset="utf-8"></script>
+	<script src="__PUBLIC__/js/layer.js"></script>
+
+
+
+
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/common.css"/>
+	<style>
+
+	</style>
+
+</head>
+<body>
+
+<div class="header cl">
+	<div class="head_left fl">
+		<!--<img class="fl" src="__PUBLIC__/images/yj/login.png">-->
+		<img class="fl" src="__PUBLIC__/images/yj/login1.png" style="margin-top: -8px;">
+	</div>
+	<div class="head_right fr">
+		<a href="#">
+			<dl class="user">
+				<dt></dt>
+				<dd>个人中心</dd>
+			</dl>
+		</a>
+		<a href="#">
+			<dl class="shezhi">
+				<dt></dt>
+				<dd>系统设置</dd>
+			</dl>
+		</a>
+		<a href="/admin/logout">
+			<dl class="exit">
+				<dt></dt>
+				<dd>退出</dd>
+			</dl>
+		</a>
+	</div>
+</div>
+
+{block name="main"}
+
+主内容
+{/block}
+
+</body>
+
+<script src="__PUBLIC__/js/bootstrap.js"></script>
+<script src="__PUBLIC__/js/jquery.nanoscroller.min.js"></script>
+<script src="__PUBLIC__/js/pace.min.js"></script>
+
+<script src="__PUBLIC__/js/hopscotch.js"></script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/hopscotch.css">
+
+<script src="__PUBLIC__/js/messager.js"></script>
+<script src="__JS__/app.js"></script>
+<script type="text/javascript">
+	var BASE_URL = "{:config('base_url')}"; //根目录地址
+</script>
+<script type="text/javascript">
+	(function(){
+		var JunYuCMS = window.JunYu = {
+			"ROOT"   : "__ROOT__", //当前网站地址
+			"APP"    : "__APP__", //当前项目地址
+			"PUBLIC" : "__PUBLIC__", //项目公共目录地址
+			"DEEP"   : "{:config('URL_PATHINFO_DEPR')}", //PATHINFO分割符
+			"MODEL"  : ["{:config('URL_MODEL')}", "{:config('URL_CASE_INSENSITIVE')}", "{:config('URL_HTML_SUFFIX')}"],
+			"VAR"    : ["{:config('VAR_MODULE')}", "{:config('VAR_CONTROLLER')}", "{:config('VAR_ACTION')}"]
+		}
+	})();
+</script>
+<script src="__PUBLIC__/js/core.js"></script>
+{block name="script"}{/block}
+</html>

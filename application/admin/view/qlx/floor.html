@@ -1,0 +1,453 @@
+{extend name="public/qlxbase" /}
+{block name="main"}
+<!-- 主题 -->
+<div class="mainbody">
+    <!-- 主体左侧 -->
+    {include file="public/qlxleft" /}
+    <!-- 主体右侧 -->
+    <div class="main_right">
+        <div class="main_con">
+            <div class="rcon_title">
+                您当前的位置：系统首页>棋乐轩>房间列表页
+            </div>
+
+        </div>
+        <div style="clear: both"></div>
+        <div class="main_kaitai">
+            <div class="main_kaitai_list">
+                <ul>
+                    {volist name="list" id="vo"}
+                    <li>
+
+                        <div class="main_kt_bj">
+                            {if condition="$meta eq 0"}
+                            <img src="__PUBLIC__/images/yj/kf.gif" alt=""/>
+                            {/if}
+                            {if condition="$meta eq 2"}
+                            <img src="__PUBLIC__/images/yj/yd.gif" alt=""/>
+                            {/if}
+                            <div class="num">1</div>
+
+                        </div>
+
+                        <div class="main_kt_top">
+                            <div class="main_kt_home">
+                                <span class="fhs">房号：{$vo.kk}</span>
+                                <span class="ths">台号：{$vo.title}</span>
+                            </div>
+                            {if condition="$meta eq 0"}
+                            <div class="main_kt_button">
+                                <input type="hidden" class="roomid" value="{$vo.id}">
+                                <input type="button" class="kt"  value="开台" onclick="ShowDiv('MyDiv','fade')"/>
+                                <input type="button" class="yd" value="预定" onclick="ShowDiv('MyDivs','fades')"/>
+                                <input type="hidden" class="roomid" value="{$vo.id}">
+                            </div>
+                            {elseif condition="$meta eq 2" /}
+                            <div class="main_yd_button">
+                                <input type="hidden" class="roomid" value="{$vo.id}">
+                                <input type="button" class="kt"  value="开台" onclick="ShowDiv('MyDiv','fade')"/>
+                                <input type="button" class="ydorder" value="预定信息" onclick="ShowDiv('MyDivs','fades')"/>
+                                <input type="hidden" class="roomid" value="{$vo.id}">
+                            </div>
+                            {else /}
+                            <div class="main_js_button">
+                                <input type="hidden" class="roomid" value="{$vo.id}">
+                                <input type="button" class="js" value="结算" onclick="ShowDiv('MyDivss','fade')"/>
+                            </div>
+                            {/if}
+                        </div>
+                    </li>
+                    {/volist}
+                    {if condition="empty($list)"} <img src="__PUBLIC__/images/yj/xueyuantubiao.png" /> 很抱歉，暂无相关数据！{/if}
+
+                </ul>
+                <div style="clear: both"></div>
+            </div>
+
+
+            <!--分页-->
+
+
+        </div>
+        <div style="clear: both"></div>
+    </div>
+</div>
+<!--开台弹窗-->
+<div id="MyDiv" class="white_content">
+    <div class="kaitai_content_big">
+        <div style="text-align: center; cursor: default; height: 40px;margin-top: 31px;">
+            <span style="font-size: 25px;color: #000;font-weight:bold;">开台信息</span>
+            <img src="__PUBLIC__/images/yj/guanbi.png" alt="" onclick="CloseDiv('MyDiv','fade')"  style="float: right"/>
+            <!--  <span style="font-size: 16px;float: right" onclick="CloseDiv('MyDiv','fade')">关闭</span>-->
+        </div>
+        <div class="ktxx">
+
+            <form action="{:url('qlx/clear')}" method="post" class="forms form-horizontal">
+                <input type="hidden" class="order_id" name="order_id" placeholder="订单编号:" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="hidden" class="meta" name="meta" placeholder="meta" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="hidden" class="pid" name="pid"  placeholder="meta" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="text" class="site_id"  name="site_id" placeholder="场地:" style="padding-left: 10px;font-size: 18px;" readonly />
+                <input type="text" class="operate_id"  name="operate_id" value="{:session('user_auth.username')}" placeholder="操作人员:" style="padding-left: 10px;font-size: 18px; " readonly/>
+                <input type="hidden" class="price"  name="price"  placeholder="台位价格:" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="text" class="create_card_id" name="create_card_id" placeholder="开台卡号:" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="text" class="remark" name="remark" placeholder="备注:" style="padding-left: 10px;font-size: 18px;"/>
+            </form>
+            <input type="submit" class="button1 ajax-post" target-form="forms" value="确定"/>
+            <input type="button" class="button2" onclick="CloseDiv('MyDiv','fade')" value="取消"/>
+        </div>
+    </div>
+</div>
+<!--预定弹窗-->
+<!--<div id="fades" class="black_overlays">
+</div>-->
+<div id="MyDivs" class="white_contents">
+    <div class="kaitai_content_big">
+        <div style="text-align: center; cursor: default; height: 40px;margin-top: 31px;">
+            <span style="font-size: 25px;color: #000;font-weight:bold;">预定信息</span>
+            <img src="__PUBLIC__/images/yj/guanbi.png" alt="" onclick="CloseDiv('MyDivs','fades')" style="float: right"/>
+        </div>
+        <div class="ydxx">
+
+            <form action="{:url('qlx/reserve')}" method="post" class="ydform form-horizontal">
+                <input type="text" class="fh" name="fh" readonly placeholder="房号:" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="text" class="th"  name="th"  readonly placeholder="台号:" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="text" class="names"  name="names" placeholder="姓名:" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="text" class="tel" name="tel" placeholder="电话:" style="padding-left: 10px;font-size: 18px;"/>
+                <input type="hidden" class="meta" name="meta" value="1">
+                <input type="hidden" class="roomids" name="roomid" value="">
+
+            </form>
+             {if condition="$meta eq 2"}
+            <input type="hidden" class="roomids" name="roomid" value="">
+            <input type="button"  class="button7 cancel" value="取消订单"/>
+            {else /}
+            <input type="submit" class="button3 ajax-post" target-form="ydform"   value="确定"/>
+            <input type="button" class="button4"  onclick="CloseDiv('MyDivs','fade')" value="取消"/>
+            {/if}
+
+        </div>
+    </div>
+</div>
+
+<!--结算弹窗-->
+<div id="MyDivss" class="jiesuan_content">
+    <div class="jiesuan_content_big">
+
+        <div style="text-align: center; cursor: default; height: 40px;margin-top: 31px;">
+            <span style="font-size: 25px;color: #000;font-weight:bold;">订单结算</span>
+            <img src="__PUBLIC__/images/yj/guanbi.png" alt="" onclick="CloseDiv('MyDivss','fade')" style="float: right"/>
+        </div>
+        <div class="jsxx">
+
+            <form action="{:url('qlx/clear')}" method="post" class="formss form-horizontal">
+                <table>
+                    <tbody>
+                    <tr class="icon_table">
+                        <td class="changdi"><span>场&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;地:</span>
+                            <input  type="text" name="site_id" class="site_id" value="" readonly  />
+                        </td>
+                        <td class="changdis"><span>结算人员: </span>
+                     <input type="text" name="clear_id"  class="clear_id"  value="{:session('user_auth.uid')}" readonly >
+
+                        </td>
+                    </tr>
+                    <tr class="icon_table">
+                        <td class="changdi"><span>开台卡号:</span>
+                            <input type="text" name="create_card_id" class="create_card_id" value="" readonly />
+                        </td>
+                        <td class="changdis"><span>台位价格: </span>
+                            <input type="text" name="price" class="price" value="元/每小时" readonly >
+
+                        </td>
+                    </tr>
+                    <tr class="icon_table">
+                        <td class="changdi"><span>结算卡号:</span>
+                            <input type="text" name="clear_card_ids" class="clear_card_ids"  id="clear_card_ids" value="" >
+                        </td>
+                        <td class="changdis"><span>开台时间:</span>
+                            <input type="text" name="create_times" class="create_times" value="" readonly >
+                        </td>
+                    </tr>
+                    <tr class="icon_table">
+                        <td class="changdi"><span>已用时间:</span>
+                            <input type="text" name="sstime" class="sstime" value="" readonly >
+                        </td>
+                        <td class="changdis"><span>购物清单:</span>
+                            <select name="" class="xiala">
+                                <!--<option value="">7</option>-->
+                                <!--<option value="">8</option>-->
+                                <!--<option value="">9</option>-->
+                            </select>
+
+                        </td>
+                    </tr>
+                    <input type="hidden" name="pid"  id="ids" class="pid"  value="">
+                    <input type="hidden" name="delpid"   class="delpid" value="">
+                    <input type="hidden" name="xqd"   class="xqd" value="">
+                    <input type="hidden" name="meta"  class="meta" value="">
+                    <tr class="icon_table">
+                        <td class="changdi"><span>订单金额:</span>
+                            <input type="text" name="deltotal" class="deltotal" style="color:#d51717;font-size: 25px;font-weight: bold;" value=""  >
+                        </td>
+                        <td class="changdis"><span>备&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;注 :</span>
+                            <input type="text" name="remark"  class="remark" value="">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </form>
+
+        </div>
+        <input type="submit" class="button5 ajax-post" target-form="formss" value="确定"/>
+        <input type="button" class="button6" onclick="CloseDiv('MyDivss','fade')" value="取消"/>
+    </div>
+</div>
+<script type="text/javascript">
+    var bodyh=document.documentElement.clientHeight;
+    var mainh=bodyh-105;
+    var mleft=document.getElementsByClassName('main_left')[0];
+    var mright=document.getElementsByClassName('main_right')[0];
+    mleft.style.height=mainh+'px';
+    mright.style.height=mainh+'px';
+    var liconpd=(mainh-600)/12;
+    var dls=document.getElementsByClassName('dls');
+    for (var i = 0; i < 7; i++){
+        dls[i].style.paddingTop=liconpd+'px';
+        dls[i].style.paddingBottom=liconpd+'px';
+    }
+    window.onresize = function(){
+        var bodyh=document.documentElement.clientHeight;
+        var mainh=bodyh-105;
+        var mleft=document.getElementsByClassName('main_left')[0];
+        var mright=document.getElementsByClassName('main_right')[0];
+        mleft.style.height=mainh+'px';
+        mright.style.height=mainh+'px';
+        var liconpd=(mainh-600)/12;
+        var dls=document.getElementsByClassName('dls');
+        for (var i = 0; i < 7; i++){
+            dls[i].style.paddingTop=liconpd+'px';
+            dls[i].style.paddingBottom=liconpd+'px';
+        }
+    }
+</script>
+<!--开台信息-->
+<script type="text/javascript">
+    //弹出隐藏层
+    function ShowDiv(show_div,bg_div){
+        document.getElementById(show_div).style.display='block';
+        document.getElementById(bg_div).style.display='block' ;
+        var bgdiv = document.getElementById(bg_div);
+        bgdiv.style.width = document.body.scrollWidth;
+        $("#"+bg_div).height($(document).height());
+
+    };
+    //ajax请求开台信息
+    $(".kt").click(function(){
+        var id=$(this).prev().val();
+
+        $.ajax({
+
+            url: "{:url('qlx/clear')}",
+            data: {'id':id , 'ss' : 1},
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+               $(".order_id").val(data['order_id']);
+               $(".site_id").val(data['site_id']);
+               $(".price").val(data['price']);
+               $(".create_card_id").val(data['create_card_id']);
+               $(".remark").val(data['remark']);
+               $(".meta").val(data['meta']);
+               $(".pid").val(id);
+                if(data.code==1){
+                    location.href="{:url('floor')}";
+                }
+//                layer.msg('已删除!', {icon: 1, time: 1000});
+//                alert(7777);
+            },
+            error: function (data) {
+                console.log(data);
+//                alert(666);
+            },
+        });
+    })
+    //ajax开台预定信息
+    $(".yd").click(function(){
+        var fh=$(this).parent().prev().children().html();
+        var th=$(this).parent().prev().children().next().html();
+        var roomid=$(this).next().val();
+
+        $('.fh').val(fh);
+        $('.th').val(th);
+        $('.roomids').val(roomid);
+
+    })
+    //ajax预定房间信息
+    $(".ydorder").click(function(){
+        var roomid=$(this).next().val();
+        $('.roomids').val(roomid);
+        $.ajax({
+            type: 'POST',
+            url: "{:url('qlx/reserve')}",
+            data: {'id':roomid,'meta':'2'},
+            dataType: 'json',
+            success: function (data) {
+                $('.fh').val(data['fh']);
+                $('.th').val(data['th']);
+                $('.names').val(data['names']);
+                $('.tel').val(data['tel']);
+            },
+            error: function (data) {
+                console.log(data.msg);
+            },
+        });
+
+    })
+    //ajax取消订单
+    $(".cancel").click(function(){
+
+        var id=$(this).prev().val();
+
+        layer.confirm('确认要取消吗？', function () {
+            $.ajax({
+                type: 'POST',
+                url: "{:url('qlx/orderdel')}",
+                data: {'id':id},
+                dataType: 'json',
+                success: function (data) {
+                    if(data==1){
+                        layer.msg('取消成功!', {icon: 1, time: 2000});
+                        location.href="{:url('qlx/index')}";
+                    }else{
+                        layer.msg('取消失败!', {icon: 1, time: 2000});
+                    }
+
+                },
+                error: function (data) {
+                    console.log(data.msg);
+                },
+            });
+        });
+
+    })
+    //预定提交
+    function ydsubmit() {
+        var d=$(".ydform").serialize();
+        $.post("qlx/reserve", d, function (data) {
+            if(data=1){
+                location.href="qlx/index";
+            }else{
+                alert(6555);
+            }
+        }, "text");
+    }
+    //ajax请求结算信息
+    $(".js").click(function(){
+        var id=$(this).prev().val();
+
+        //结算卡号不为空
+
+        $.ajax({
+
+            url: "{:url('qlx/clear')}",
+            data: {'id':id , 'ss' : 'clear'},
+            dataType: 'json',
+            success: function (data) {
+                var datas=data.list;
+                var datass=data.listss;
+//                var tt=new Date(parseInt(datas['create_time']) * 1000).toLocaleString();
+                var tt=new Date(parseInt(datas['create_time']) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ") ;
+
+                console.log(data);
+                var html = '';
+                if(datass.length>0){
+                    for(var i=0;i<datass.length;i++){
+                        if(datass[i]){
+                            for(var y=0;y<datass[i].length;y++){
+                                html += '<option value="">'+datass[i][y]['title'] +'--'+datass[i][y]['price'] +'元 '+  '--数量'+datass[i][y]['count']+'</option>';
+                            }
+                        }
+
+                    };
+                }
+                console.log(datas);
+
+                $(".order_id").val(data['order_id']);
+                $(".site_id").val(datas['site_id']);
+                $(".price").val(datas['price']+'元/小时');
+                $(".deltotal").val(datas['total']);
+                $(".create_card_id").val(datas['create_card_id']);
+                $(".sstime").val(datas['time']);
+                $(".create_times").val(tt);
+                $(".remark").val(datas['remark']);
+                $(".xiala").html(html);
+//                $(".clear_id").val();
+                $(".meta").val(datas['meta']);
+                $(".pid").val(datas['id']);
+                $(".xqd").val(datas['xqd']);
+                $(".delpid").val(datas['delpid']);
+                if(data.code==1){
+                    location.href="qlx/index";
+                }
+//                layer.msg('已删除!', {icon: 1, time: 1000});
+//                alert(7777);
+            },
+            error: function (data) {
+                console.log(data);
+//                alert(666);
+            },
+        });
+    })
+
+    //关闭弹出层
+    function CloseDiv(show_div,bg_div)
+    {
+        document.getElementById(show_div).style.display='none';
+        document.getElementById(bg_div).style.display='none';
+    };
+</script>
+<!--预定信息-->
+<script type="text/javascript">
+    //弹出隐藏层
+    function ShowDivs(show_divs,bg_divs){
+        document.getElementById(show_divs).style.display='block';
+        document.getElementById(bg_divs).style.display='block' ;
+        var bgdivs = document.getElementById(bg_divs);
+        bgdivs.style.width = document.body.scrollWidth;
+        // bgdivs.style.height = $(document).height();
+        $("#"+bg_divs).height($(document).height());
+    };
+    //关闭弹出层
+    function CloseDiv(show_divs,bg_divs)
+    {
+        document.getElementById(show_divs).style.display='none';
+        document.getElementById(bg_divs).style.display='none';
+    };
+</script>
+<!--结算信息弹出-->
+<script type="text/javascript">
+    //弹出隐藏层
+    function ShowDiv(show_div,bg_div){
+        document.getElementById(show_div).style.display='block';
+        document.getElementById(bg_div).style.display='block' ;
+        var bgdiv = document.getElementById(bg_div);
+        bgdiv.style.width = document.body.scrollWidth;
+        $("#"+bg_div).height($(document).height());
+    };
+    //关闭弹出层
+    function CloseDiv(show_div,bg_div)
+    {
+        document.getElementById(show_div).style.display='none';
+        document.getElementById(bg_div).style.display='none';
+    };
+</script>
+<!--计算页面可视化高度-->
+<script type="text/javascript">
+    var body =$(window).height();
+    var mainbody= body-105;
+    $(function(){
+        window.onload = $('.main_right').css({'height':mainbody+'px'});
+    });
+</script>
+{/block}

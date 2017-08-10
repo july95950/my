@@ -1,0 +1,164 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+{/block}
+{block name="body"}
+
+
+<div class="clearfix main-box">
+	<div class="main-box-body clearfix">
+		<!--
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-1 col-sm-1" style="padding:6px 12px;">
+				课表信息：
+			</div>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-2 col-sm-3">
+				<select name="allClassName" id="allClassName" class="form-control">
+					<option value="">请选择班级</option>
+					{volist name="allClass" id="ac"}
+						<option value="{$ac['id']}">{$ac['className']}</option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		-->
+		<div class="form-group" style="margin-top:20px;">
+			<label class="col-lg-1 control-label" style="margin-top:8px;">请选择开始时间:</label>
+			<div class="col-lg-2 col-sm-3">
+				<input type="text" class="form-control" id="date2" name="starttime" value="" readonly size="15">
+				
+			</div>
+			<script>
+			$('#date2').fdatepicker({
+				format: 'yyyy-mm-dd',
+				pickTime: false
+			});
+			</script>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-2 col-sm-3">
+				<div class="btn btn-primary" onclick="chaxun()">查 询</div>
+				<script>
+				function chaxun(){
+					//var classes = $('#allClassName').val();
+					var date2 = $('#date2').val();
+					/*
+					if(!classes){
+						alert('请选择需要查询的班级');
+						return false;
+					}
+					*/
+					if(!date2){
+						alert('请选择查询日期');
+						return false;
+					}
+					//alert($classes);
+					location.href="{:url('index')}"+'?date2='+date2;
+				}
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="clearfix main-box">
+	<div class="main-box-body clearfix">
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-1 col-sm-1" style="padding:6px 12px;">
+				下周排课：
+			</div>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-2 col-sm-3">
+				<select name="className" id="className" class="form-control">
+					<option value="">请选择班级</option>
+					{volist name="nClass" id="cl"}
+						<option value="{$cl['id']}">{$cl['className']}</option>
+					{/volist}
+				</select>
+			</div>
+		</div>
+		<div class="form-group">
+			<label class="col-lg-1 control-label" style="margin-top:8px;">请选择开始时间:</label>
+			<div class="col-lg-2 col-sm-3">
+				<input type="text" class="form-control" id="date1" name="starttime" value="{$rsnextWeek|date='Y-m-d',###}" readonly size="15">
+				
+			</div>
+			<script>
+			$('#date1').fdatepicker({
+				format: 'yyyy-mm-dd',
+				pickTime: false
+			});
+			</script>
+		</div>
+		<div class="form-group" style="margin-top:20px;">
+			<div class="col-lg-2 col-sm-3">
+				<div class="btn btn-primary" onclick="paike()">排 课</div>
+				<script>
+				function paike(){
+					var classes = $('#className').val();
+					if(!classes){
+						alert('请选择要排课班级');
+						return false;
+					}
+					//alert($classes);
+					location.href="{:url('add')}"+'?classid='+classes;
+				}
+				</script>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title} <font style="font-size:14px;">（已排课班级<font style="color:#f60;">{$countY}</font>家，未排课班级<font style="color:#f60;">{$countW}</font>家）</font></h2><span><font style="color:#f60;">开始时间</font>：&nbsp;&nbsp;{$beginNextWeek|date='Y-m-d',###}</span><span>&nbsp;&nbsp;<font style="color:#f60;">结束时间</font>：&nbsp;&nbsp;{$endNextWeek|date='Y-m-d',###}</span>
+		</div>
+		<div class="pull-right">
+			<button class="btn btn-danger ajax-post confirm" url="{:url('delete')}" target-form="ids">删 除</button>
+		</div>
+	</header>
+
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>班级编号</th>
+						<th>班级名称</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody style="">
+					{volist name="classes" id="list"}
+						<tr>
+							<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list['id']}"></td>
+							<th width="60">{$list['id']}</th>
+							<th>{$list['classId']}</th>
+							<th>{$list['className']}</th>
+							{if condition="$list['status'] eq 1"}
+								<th style="color:#00BEAF;">已排课</th>
+							{else/}
+								<th style="color:#FE406E;">未排课</th>
+							{/if}
+							<th>
+								<a title="编辑" href="{:url('edit?id='.$list['id'].'&st='.$beginNextWeek.'&et='.$endNextWeek)}">编辑</a>
+								<a title="删除" href="{:url('delete?id='.$list['id'])}" class="confirm ajax-get">删除</a>
+							</th>
+						</tr>
+					{/volist}
+				</tbody>
+			</table>
+			
+		</div>
+	</div>
+</div>
+{/block}

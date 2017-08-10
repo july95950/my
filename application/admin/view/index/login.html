@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<title>颐嘉学院管理系统</title>
+	<meta name="description" content="">
+	<meta name="keywords" content="">
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/logincss/reset.css"/>
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/logincss/login.css"/>
+
+
+
+	<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/common.css"/>
+
+
+	<!--[if lt IE 9]>
+	<script src="__PUBLIC__/js/html5shiv.min.js"></script>
+	<script src="__PUBLIC__/js/ie8polyfill.min.js"></script>
+	<![endif]-->
+</head>
+<body>
+<div class="login_back">
+	<div class="loginbox">
+		<div class="login"><img src="__PUBLIC__/images/login/logo.png"></div>
+		<form role="form" method="post">
+			<div class="formbox">
+				<dl class="user">
+					<dt></dt>
+					<dd><input type="text" id="itemBox" name="username" placeholder="请输入用户名"></dd>
+				</dl>
+				<dl class="pwd">
+					<dt></dt>
+					<dd><input type="password" name="password" placeholder="请输入密码"></dd>
+				</dl>
+				<dl class="code">
+					<dt></dt>
+					<dd><input type="text" name="verify" placeholder="请输入验证码"></dd>
+					<img src="{:url('admin/index/verify')}" alt="" class="verifyimg imgcode reloadverify">
+				</dl>
+				<dl class="btn">
+
+					<button type="submit">登录</button>
+				</dl>
+				<dl class="btn">
+					<!--<a href="#">忘记密码？</a>-->
+				</dl>
+			</div>
+		</form>
+	</div>
+</div>
+<script src="__PUBLIC__/js/jquery.js"></script>
+<script src="__PUBLIC__/js/messager.js"></script>
+<script type="text/javascript">
+	// 高度自适应
+	var bodyh=document.documentElement.clientHeight;
+	var login_back=document.getElementsByClassName('login_back');
+	login_back[0].style.height=bodyh+"px";
+	// 登录框居中
+	var loginbox=document.getElementsByClassName('loginbox')[0];
+	var loginboxh=loginbox.offsetHeight;
+	var loginboxtop=(bodyh-loginboxh)/2;
+	loginbox.style.paddingTop=loginboxtop+'px';
+	window.onresize = function(){
+		// 高度自适应
+		var bodyh=document.documentElement.clientHeight;
+		var login_back=document.getElementsByClassName('login_back');
+		login_back[0].style.height=bodyh+"px";
+		// 登录框居中
+		var loginbox=document.getElementsByClassName('loginbox')[0];
+		var loginboxh=loginbox.offsetHeight;
+		var loginboxtop=(bodyh-loginboxh)/2;
+		loginbox.style.paddingTop=loginboxtop+'px';
+	}
+</script>
+<script>
+	$(function(){
+
+		/* 登陆表单获取焦点变色 */
+		$(".login-form").on("focus", "input", function(){
+			$(this).closest('.item').addClass('focus');
+		}).on("blur","input",function(){
+			$(this).closest('.item').removeClass('focus');
+		});
+
+		//表单提交
+		$(document).ajaxStart(function(){
+			$("button:submit").addClass("log-in").attr("disabled", true);
+		}).ajaxStop(function(){
+			$("button:submit").removeClass("log-in").attr("disabled", false);
+		});
+
+		$("form").submit(function(){
+			var self = $(this);
+			$.post(self.attr("action"), self.serialize(), success, "json");
+			return false;
+
+			function success(data){
+				if(data.code){
+					$.messager.show(data.msg, {placement: 'center',type:'success'});
+					setTimeout(function(){
+						window.location.href = data.url;
+					},2000);
+				} else {
+					$.messager.show(data.msg, {placement: 'center',type:'success'});
+					//刷新验证码
+					$(".reloadverify").click();
+				}
+			}
+		});
+		//初始化选中用户名输入框
+		$("#itemBox").find("input[name=username]").focus();
+		//刷新验证码
+		var verifyimg = $(".verifyimg").attr("src");
+		$(".reloadverify").click(function(){
+			if( verifyimg.indexOf('?')>0){
+				$(".verifyimg").attr("src", verifyimg+'&random='+Math.random());
+			}else{
+				$(".verifyimg").attr("src", verifyimg.replace(/\?.*$/,'')+'?'+Math.random());
+			}
+		});
+
+		//placeholder兼容性
+		//如果支持
+		function isPlaceholer(){
+			var input = document.createElement('input');
+			return "placeholder" in input;
+		}
+		//如果不支持
+		if(!isPlaceholer()){
+			$(".placeholder_copy"	).css({display:'block'})
+			$("#itemBox input").keydown(function(){
+				$(this).parents(".item").next(".placeholder_copy").css({display:'none'})
+			})
+			$("#itemBox input").blur(function(){
+				if($(this).val()==""){
+					$(this).parents(".item").next(".placeholder_copy").css({display:'block'})
+				}
+			})
+		}
+	});
+</script>
+</body>
+</html>

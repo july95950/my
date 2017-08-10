@@ -1,0 +1,68 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+{/block}
+{block name="body"}
+<div class="main-box no-header clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$title}</h2>
+		</div>
+		<div class="pull-right">
+			<a class="btn btn-primary" href="{:url('add')}"><i class="fa fa-plus-circle fa-lg"></i> 新 增</a>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		
+		<!-- 表格列表 -->
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>名称</th>
+						<th>库存</th>
+						<th>规格</th>
+						<th>数量</th>
+						<th>条码号</th>
+						<th>入库价格</th>
+						<th>入库时间</th>
+						<th>录入人id</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="tree" id="list"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>
+						<td>{$list['id']}</td>
+						<td>{$list['title']}</td>
+						<td>{$list['business_id']}</td>
+						<td>{$list['create_person']}</td>
+						<td>{$list['create_time']}</td>
+						<td>
+							<a title="编辑" href="{:url('edit?id='.$list['id'])}">编辑</a>
+							<a title="删除" href="{:url('remove?id='.$list['id'])}" class="confirm ajax-get">删除</a>
+						</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+		</div>
+		<!-- /表格列表 -->
+	</div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	$.fn.editable.defaults.mode = 'popup';
+	$.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+	'<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+	$('.editable').editable();
+})
+</script>
+{/block}

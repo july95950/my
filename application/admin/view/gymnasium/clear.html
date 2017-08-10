@@ -1,0 +1,136 @@
+{extend name="public/base"/}
+{block name="body"}
+
+<div class="main-box clearfix">
+    <header class="main-box-header clearfix">
+        <div class="pull-left">
+            <h2>{if condition="$list.meta eq 0"}订单结算{else /}订单生成{/if}</h2>
+        </div>
+    </header>
+    <div class="main-box-body clearfix">
+
+        <form action="{:url()}" method="post" class="form form-horizontal">
+            <div class="tabs-wrapper">
+
+                <div class="tab-content">
+                    <div class="tab-pane fade in active" id="tab-base">
+
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">订单编号</label>
+                            <div class="col-lg-8" id="batch" >
+                                <input type="text"  name="order_id" class="form-control" value="{$list.order_id}" readonly >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">场地</label>
+                            <div class="col-lg-8" id="cpdm" >
+                                <input type="text" name="site_id" class="form-control" value="{$list.site_id}" readonly >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">操作人员</label>
+                            <div class="col-lg-8" id="short" >
+                                <input type="text" name="operate_id" class="form-control" value=" {if condition='$list.meta eq 0'}{$list.operate_id}{else /}{:session('user_auth.username')}{/if}" readonly >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">开台卡号</label>
+                            <div class="col-lg-8" id="gg" >
+                                <input type="text" name="create_card_id" class="form-control" value="{$list.create_card_id}" {if condition="$list.meta eq 0"}readonly{/if}>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">台位价格</label>
+                            <div class="col-lg-8" id="yxq" >
+                                <input type="text" name="price" class="form-control" value="{$list.price}元/每小时" readonly >
+                            </div>
+                        </div>
+                        {if condition="$list.meta eq 0"}
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">结算卡号</label>
+                            <div class="col-lg-8"  >
+                                <input type="text" name="clear_card_ids" class="form-control" id="clear_card_ids" value="{$list.clear_card_id}" >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">开台时间</label>
+                            <div class="col-lg-8" >
+                                <input type="text" name="create_times" class="form-control" value="{$list.create_time|date='Y-m-d H:i:s',###}" readonly >
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">已用时间</label>
+                            <div class="col-lg-8" >
+                                <input type="text" name="sstime" class="form-control" value="{$list.time}" readonly >
+                            </div>
+                        </div>
+                        {/if}
+                        {if condition="$list['meta'] eq 0"}
+                        {if condition="$price neq 0" || condition="$pricis neq 0"}
+
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">购物清单</label><br/>
+
+                            <div class="col-lg-8" >
+                                {volist name="listbuy" id="vos"}
+                                {volist name="vos" id="vo"}
+                                <input type="text" name="gulist" class="form-control" value="{$vo.title} {$vo.price}元   数量{$vo.count}" readonly >
+                                {/volist}
+                                {/volist}
+                                <div>购物金额：{$list.prices}元</div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">租赁清单</label><br/>
+
+                            <div class="col-lg-8" >
+                                {volist name="listsrrd" id="vos"}
+                                {volist name="vos" id="vo"}
+                                <input type="text" name="gulist" class="form-control" value="{$vo.title} {$vo.price}元   数量{$vo.count}   时间{$list.time}" readonly >
+                                {/volist}
+                                {/volist}
+                                <div>租赁金额：{$list.pricies}元</div>
+                            </div>
+                        </div>
+                        {/if}
+
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">订单总金额</label>
+                            <div class="col-lg-8" >
+                                <input type="text" name="deltotal" class="form-control" value="{$list.total}"  >
+                            </div>
+                        </div>
+                        {/if}
+                        <div class="form-group">
+                            <label class="col-lg-2 control-label">备注</label>
+                            <div class="col-lg-8">
+                                <input type="text" name="remark" class="form-control" value="{$list.remark}" {if condition="$list.meta eq 0"}{/if}>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+            <input type="hidden" name="pid"  id="ids" value="{$list.id|default=''}">
+            <input type="hidden" name="delpid"   value="{$list.delpid|default='0'}">
+            <input type="hidden" name="xqd"   value="{$list.xqd|default='0'}">
+            <input type="hidden" name="meta"   value="{$list.meta|default=''}">
+            <div class="form-group">
+                <div class="col-lg-offset-2 col-lg-10">
+                    <button type="submit" class="btn btn-success submit-btn ajax-post" target-form="form">确认{if condition="$list.meta eq 0"}结算{else /}提交{/if}</button><!--ajax-post-->
+                    <button class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $("#cpbh").val("{$info.cpbh|default='0'}");
+    $("#status").val("{$info.status|default='0'}");
+</script>
+
+
+{/block}
+

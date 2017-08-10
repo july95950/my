@@ -1,0 +1,222 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<!-- datepicker statr -->
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+<link href="__PUBLIC__/plugs/ueditor/themes/default/css/ueditor.min.css" rel="stylesheet" type="text/css">
+<!-- 配置文件 -->
+<script type="text/javascript" src="__PUBLIC__/plugs/ueditor/ueditor.config.js"></script>
+<!-- 编辑器源码文件 -->
+<script type="text/javascript" src="__PUBLIC__/plugs/ueditor/ueditor.all.min.js"></script>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+		</div>
+		<div class="pull-right">
+		</div>
+	</header>
+	<div class="main-box-body clearfix" data="{$selfClass.id}" id="classidDiv">班级：<font style="color:#f60">{$selfClass.className}</font></div>
+	<div class="main-box-body clearfix">
+			<!-- 表格列表 -->
+			<div class="table-responsive clearfix">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th width="120">课程表</th>
+							<th width="120">星期一 <span id="monday">{$monday|date='Y-m-d',###}</span></th>
+							<th width="120">星期二 <span id="tuesday">{$tuesday|date='Y-m-d',###}</span></th>
+							<th width="120">星期三 <span id="wednesday">{$wednesday|date='Y-m-d',###}</span></th>
+							<th width="120">星期四 <span id="thursday">{$thursday|date='Y-m-d',###}</span></th>
+							<th width="120">星期五 <span id="friday">{$friday|date='Y-m-d',###}</span></th>
+							<th width="120">星期六 <span id="saturday">{$saturday|date='Y-m-d',###}</span></th>
+							<th width="120">星期日 <span id="sunday">{$sunday|date='Y-m-d',###}</span></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th width="120"><span class="form-control" style="border:0">8:30-10:00</span></th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='1,1' id="data1_1" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='1,2' id="data1_2" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='1,3' id="data1_3" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='1,4' id="data1_4" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='1,5' id="data1_5" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='1,6' id="data1_6" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='1,7' id="data1_7" class="form-control"></select>
+							</th>
+						</tr>
+						<tr>
+							<th width="120"><span class="form-control" style="border:0">10:30-12:00</span></th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='2,1' id="data2_1" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='2,2' id="data2_2" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='2,3' id="data2_3" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='2,4' id="data2_4" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='2,5' id="data2_5" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='2,6' id="data2_6" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='2,7' id="data2_7" class="form-control"></select>
+							</th>
+						</tr>
+						<tr>
+							<th width="120"><span class="form-control" style="border:0">14:00-15:30</span></th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='3,1' id="data3_1" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='3,2' id="data3_2" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='3,3' id="data3_3" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='3,4' id="data3_4" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='3,5' id="data3_5" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='3,6' id="data3_6" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='3,7' id="data3_7" class="form-control"></select>
+							</th>
+						</tr>
+						<tr>
+							<th width="120"><span class="form-control" style="border:0">16:00-17:30</span></th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='4,1' id="data4_1" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='4,2' id="data4_2" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='4,3' id="data4_3" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='4,4' id="data4_4" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='4,5' id="data4_5" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='4,6' id="data4_6" class="form-control"></select>
+							</th>
+							<th width="120">
+								<select class="courseCon" name="courseId" data='4,7' id="data4_7" class="form-control"></select>
+							</th>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<!-- /表格列表 -->
+			<div id="courseList" style="display:none;">
+				<option value="">请选择课程</option>
+				{volist name="course" id="course"}
+					<option value="{$course['id']}">{$course['title']}</option>
+				{/volist}
+			</div>
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-lg-10">
+					
+					<button class="btn btn-success submit-btn ajax-post">确 定</button>        
+					<div class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</div>
+				</div>
+			</div>
+		
+	</div>
+</div>
+<script>
+$(".submit-btn").click(function(){
+	var totalArr = [];
+	var classid = $('#classidDiv').attr('data');
+
+	$(".courseCon").each(function(){
+		if($(this).val()){
+			//console.log($(this).val()+'|||'+$(this).attr('data'));
+			var singleArr = [];
+			singleArr['courseId'] = $(this).val();
+			singleArr['classId'] = classid;
+			singleArr['mark'] = $(this).attr('id');
+			var dayArr = $(this).attr('data').split(",");
+			switch(dayArr[0]){
+				case '1' : singleArr['starttime'] = '8:30'; singleArr['endtime'] = '10:00'; break;
+				case '2' : singleArr['starttime'] = '10:30'; singleArr['endtime'] = '12:00'; break;
+				case '3' : singleArr['starttime'] = '14:00'; singleArr['endtime'] = '15:30'; break;
+				case '4' : singleArr['starttime'] = '16:00'; singleArr['endtime'] = '17:30'; break;
+			}
+			switch(dayArr[1]){
+				case '1' : singleArr['date'] = $('#monday').html(); break;
+				case '2' : singleArr['date'] = $('#tuesday').html(); break;
+				case '3' : singleArr['date'] = $('#wednesday').html(); break;
+				case '4' : singleArr['date'] = $('#thursday').html(); break;
+				case '5' : singleArr['date'] = $('#friday').html(); break;
+				case '6' : singleArr['date'] = $('#saturday').html(); break;
+				case '7' : singleArr['date'] = $('#sunday').html(); break;
+			}
+			if(singleArr){
+				totalArr.push(singleArr);
+			}
+		}
+		
+	});
+	//console.log(totalArr);
+
+	if(totalArr.length>0){
+		var json = {};
+		for(var i=0; i<totalArr.length;i++){
+			json[i] = {};
+			for(var key in totalArr[i]){
+		  	   json[i][key]=totalArr[i][key];
+			}
+		}
+		totalJSON = JSON.stringify(json);
+		//console.log(totalJSON);
+		$.post('{:url('add')}',{cList:totalJSON},function(data){
+          console.log(data);
+          if(data.code == 1){
+          	location.href="{:url('index')}";
+          }else{
+          	alert(data.msg);
+          }
+        });
+	}else{
+		alert('课程不能全部为空');
+	}
+	
+});
+$(function(){
+	$(".courseCon").html($('#courseList').html());
+})
+</script>
+{/block}
+{block name="script"}
+{/block}

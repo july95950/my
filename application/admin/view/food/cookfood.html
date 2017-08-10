@@ -1,0 +1,103 @@
+{extend name="public/base"/}
+
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extraCss.css">
+<script>
+$(function(){
+	$('#page-wrapper').css('paddingTop','20px');
+})
+</script>
+
+{/block}
+{block name="header"}
+<div class="header cl">
+	<div class="head_left fl">
+		<!--<img class="fl" src="images/login.png">-->
+		<img class="fl" src="__PUBLIC__/images/ctlogo.png" style="margin-top: -12px;margin-left: -25px;">
+	</div>
+	<div class="head_right fr">
+		<a href="#">
+			<dl class="user">
+				<dt></dt>
+				<dd>个人中心</dd>
+			</dl>
+		</a>
+		<a href="#">
+			<dl class="shezhi">
+				<dt></dt>
+				<dd>系统设置</dd>
+			</dl>
+		</a>
+		<a href="{:url('admin/index/logout')}">
+			<dl class="exit">
+				<dt></dt>
+				<dd>退出</dd>
+			</dl>
+		</a>
+	</div>
+</div>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+			<a class="btn btns" href="{:url('cookadd')}">新 增</a>
+			<button class="btn btn-danger btns ajax-post confirm" url="{:url('deletecook')}" target-form="ids">删 除</button>
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<table class="table table-hover">
+				<thead>
+					<tr>
+						<th width="30"><input class="checkbox check-all" type="checkbox"></th>
+						<th width="60">ID</th>
+						<th>菜品名称</th>
+						<th>菜品分类</th>
+						<th>价格</th>
+						<th>图片</th>
+						<th>添加时间</th>
+						<th>状态</th>
+						<th>操作</th>
+					</tr>
+				</thead>
+				<tbody>
+					{volist name="list" id="item"}
+					<tr>
+						<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$item['id']}"></td>
+						<td>{$item['id']}</td>
+						<td>{$item['foodname']}</td>
+						<td>{$item['foodclass']}</td>
+						<td>{$item['price']}</td>
+						{if isset($item['img']) && $item['img']}
+						{php}
+						$images = get_cover($item['img']);
+						{/php}
+						<td><img style="width:40px; height:40px;" src="{:config('base_url')}{$images['path']}" class="img-responsive"></td>
+						{else/}
+						<td><img style="width:40px; height:40px;" src="" class="img-responsive"></td>
+						{/if}
+						<td>{$item['addtime']|date='Y-m-d',###}</td>
+						<td>
+							{if $item['status'] eq 1}
+							<span class="label label-primary">启用</span>
+							{else/}
+							<span class="label label-danger">禁用</span>
+							{/if}
+						</td>
+						<td>
+							<a href="{:url('cookedit?id='.$item['id'])}">编辑</a>
+							<a href="{:url('deletecook?id='.$item['id'])}" class="confirm ajax-get">删除</a>
+						</td>
+					</tr>
+					{/volist}
+				</tbody>
+			</table>
+			{$page}
+		</div>
+	</div>
+</div>
+{/block}

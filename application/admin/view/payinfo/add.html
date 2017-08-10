@@ -1,0 +1,449 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<!-- datepicker statr -->
+<link href="__PUBLIC__/plugs/datepicker/css/foundation-datepicker.min.css" rel="stylesheet" type="text/css">
+<script src="__PUBLIC__/js/base.js"></script>
+<script src="__PUBLIC__/js/interface.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.js"></script>
+<script src="__PUBLIC__/plugs/datepicker/js/foundation-datepicker.zh-CN.js"></script>
+
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+	<header class="main-box-header clearfix">
+		<div class="pull-left">
+			<h2>{$meta_title}</h2>
+		</div>
+		<div class="pull-right">
+		</div>
+	</header>
+	<div class="main-box-body clearfix">
+		<form method="post" name="form1" class="form form-horizontal">
+			<div class="form-group">
+				<label class="col-lg-2 control-label">学号</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" class="form-control " name="stuNo" value="{$stuNo|default=''}">
+					<div class="help-block">请输入学号</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 control-label">姓名</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" class="form-control " name="stuName" value="">
+					<div class="help-block">请输入姓名</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 control-label">性别</label>
+				<div class="col-lg-8 col-sm-10">
+					<select name="stuSex" class="form-control">
+						<option value="">请选择性别</option>
+						<option value="男">男</option>
+						<option value="女">女</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 control-label">出生日期</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" class="form-control" id="dates" name="stuBirthday" value="" readonly size="15">
+					<div class="help-block">请选择出生日期</div>
+				</div>
+				<script>
+				$('#dates').fdatepicker({
+					format: 'yyyy-mm-dd',
+					pickTime: false
+				});
+				</script>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-2 control-label">身份证号</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" class="form-control " name="stuICNO" value="">
+					<div class="help-block">请输入身份证号</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 control-label">本人电话</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" class="form-control " name="stuPhone" value="">
+					<div class="help-block">请输入本人电话</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 control-label">紧急电话</label>
+				<div class="col-lg-8 col-sm-10">
+					<input type="text" class="form-control " name="crashPhone" value="">
+					<div class="help-block">请输入紧急联系电话</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-lg-2 control-label">绑定卡号</label>
+				<div class="col-lg-4 col-sm-5">
+					<input type="text" class="form-control" id="bindCardNo" name="bindCardNo" value="">
+					<div class="help-block">请输入绑定卡号</div>
+				</div>
+				<div class="col-lg-2 col-sm-3">
+					<div style="text-align:center;border:1px solid #dedede;padding:6px 12px;cursor:pointer;" id="bindDiv">绑定卡号</div>
+					<div class="help-block"><input type="text" class="form-control" style="background:#fff;border:0;" disabled id="msgs" value=""></div>
+				</div>
+				
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-2 control-label">是否启用</label>
+				<div class="col-lg-8 col-sm-10">
+					<div class="radio radio-nice radio-inline">
+								<input type="radio" name="status" id="status-1" value="1" checked>
+								<label for="status-1">启用</label>
+							</div>
+							<div class="radio radio-nice radio-inline">
+								<input type="radio" name="status" id="status-0" value="0">
+								<label for="status-0">禁用</label>
+							</div>
+					</div>
+			</div>
+			
+			<div class="form-group">
+				<div class="col-lg-offset-2 col-lg-10">
+					
+					<button class="btn btn-success submit-btn ajax-post" target-form="form-horizontal">确 定</button>        
+					<div class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<script>
+$(".submit-btn").click(function(){
+
+    for(var i=0;i<document.form1.elements.length-1;i++){
+         if(document.form1.elements[i].value=="")
+         {
+           alert("当前表单不能有空项");
+           document.form1.elements[i].focus();
+           return false;
+         }
+    }
+    document.form1.submit();
+});
+
+//读卡器初始化
+var msg = document.getElementById('msgs');
+var obj = embed_reader.getOBJ(READER_TYPE._reader_type_contactLess);
+obj.onResult(function(rData)
+{
+	switch(rData.FunctionID)
+    {
+		case FUNCIDS._fid_initialcom:
+		{
+		var opst;
+		var rel = rData.RePara_Int;
+		if(0 == rel)
+		{
+			var hdev = parseInt(rData.RePara_Str);
+			if(hdev != -1)
+			{
+				icdev= hdev;
+				obj.beep(icdev,10);   //do a beep
+				msg.value =msg.value+"Link reader ok\n";
+				isComOpen=true;             //Set reader link status
+			}
+			else
+			{
+				msg.value = "Link reader error\n";
+						isComOpen=false;           //Set reader link failed status
+			}
+		}
+		else
+			msg.value = "Object load error\n";
+		}
+		break;
+		case FUNCIDS._fid_exit:
+		msg.value =msg.value+"reader closed\n"
+		break;
+		case FUNCIDS._fid_beep:
+		break;
+		case FUNCIDS._fid_GetDevSN:
+		msg.value =msg.value+"DevSN:" + rData.RePara_Str + "\n";
+		break;
+		case FUNCIDS._fid_srd_eeprom:
+		msg.value =msg.value+"Read EEPROM:" + rData.RePara_Str + "\n";
+		break;
+		case FUNCIDS._fid_swr_eeprom:
+		msg.value =msg.value+"Write EEPROM result:" + rData.RePara_Int + "\n";
+		break;
+		case FUNCIDS._fid_loadKey:
+		msg.value =msg.value+"Load key result:" + rData.RePara_Int + "\n";
+		break;
+		case FUNCIDS._fid_findCardStr:
+		{
+			var strcard= rData.RePara_Str;
+			if(strcard!="")
+			{
+				hasCard =true;
+                //msg.value=strcard;
+                msg.value=msg.value+"Card ID: "+strcard+"\n";
+                document.getElementById('bindCardNo').value = strcard;
+				//obj.halt(icdev);
+				switch(gl_wantFunc)
+				{
+					case GFUNC.readClass:
+					case GFUNC.writeClass:
+					case GFUNC.initVal:
+					case GFUNC.increment:
+					case GFUNC.decrement:
+					case GFUNC.readVal:
+					case GFUNC.updateKey:
+					obj.authentication(icdev,0,gl_sector); 
+					break;
+					case GFUNC.mifareProTest:
+					obj.mifareproReset(icdev);
+					break;
+				}
+			}
+			else
+			{
+				//msg.value=msg.value+"Found no card \n";
+				hasCard =false;        //Set no card status
+			}
+		}
+		break;
+		case FUNCIDS._fid_authenClass:
+		{
+			var rel = rData.RePara_Int;
+			if(0 == rel)
+			{
+				switch(gl_wantFunc)
+				{
+					case GFUNC.readClass:
+					obj.read(icdev,gl_BinBlock); 
+					//obj.directRead(icdev,gl_BinBlock);        //Read data directly as binary
+					break;
+					case GFUNC.writeClass:
+					obj.write(icdev,gl_BinBlock,"11111111111111111111111111111111");   
+					//obj.directWrite(icdev,gl_BinBlock,"IC Card Reader  ");
+					break;
+					case GFUNC.initVal:
+					obj.initialval(icdev,gl_valBlock,100);
+					break;
+					case GFUNC.increment:
+					obj.increment(icdev,gl_valBlock,20);
+					break;
+					case GFUNC.decrement:
+					obj.decrement(icdev,gl_valBlock,10);
+					break;
+					case GFUNC.readVal:
+					obj.readval(icdev,gl_valBlock);
+					break;
+					case GFUNC.updateKey:
+					obj.changkey(icdev,gl_sector,"FFFFFFFFFFFf","FF078069",0,"FFFFFFFFFFFF");
+					break;
+				}
+			}
+			else msg.value=msg.value+" Authen sector:" + gl_sector +" error \n";
+		}
+		break;
+		case FUNCIDS._fid_readAsStr:
+		{
+			var data =  rData.RePara_Str;     
+			if(data != "")
+			{
+				msg.value = msg.value + "Read ok, data: \n" + data + "\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Read error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_writeAsStr:
+		{
+			var iRet = rData.RePara_Int;   
+			if(iRet == 0)
+			{
+				msg.value = msg.value + "Write card ok\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Write card error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_initVal:
+		{
+			var iRet = rData.RePara_Int;   
+			if(iRet == 0)
+			{
+				msg.value = msg.value + "Initial value ok\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Initial value error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_increment:
+		{
+			var iRet = rData.RePara_Int;   
+			if(iRet == 0)
+			{
+				obj.transfer(icdev,gl_valBlock);
+				msg.value = msg.value + "Increment value ok\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Increment value error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_decrement:
+		{
+			var iRet = rData.RePara_Int;   
+			if(iRet == 0)
+			{
+				obj.transfer(icdev,gl_valBlock);
+				msg.value = msg.value + "Decrement value ok\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Decrement value error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_readVal:
+		{
+			var iRet = rData.RePara_Int;   
+			if(iRet > 0)
+			{
+				msg.value = msg.value + "Current value :" + iRet +"\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Read value error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_changeKey:
+		{
+			var iRet = rData.RePara_Int;   
+			if(iRet == 0)
+			{
+				msg.value = msg.value + "Update key ok\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Update key error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_mifareProReset:
+		{
+			var iRet = rData.RePara_Str;   
+			if(iRet != "")
+			{
+				msg.value = msg.value + "MifarePro reset:" + iRet + "\n";
+				obj.mifareproCommandlink(icdev,"0084000008");
+			}
+			else
+			{
+				msg.value = msg.value + "MifarePro reset error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_mifareProAPDU:
+		{
+			var iRet = rData.RePara_Str;   
+			if(iRet != "")
+			{
+				msg.value = msg.value + "MifarePro apdu return:" + iRet + "\n";
+			}
+			else
+			{
+				msg.value = msg.value + "MifarePro apdu error\n";
+			}
+		}
+		break;
+		case FUNCIDS._fid_id:
+		{
+			var strcard = rData.RePara_Str;
+
+			if(strcard != "")
+			{
+				msg.value = msg.value + "Read card ok, ID: \n" + strcard + "\n";
+			}
+			else
+			{
+				msg.value = msg.value + "Read card error\n";
+			}
+		}
+		break;
+	}
+	
+}
+);
+
+var GFUNC = {
+	readClass:1,
+	writeClass:2,
+	initVal:3,
+	increment:4,
+	decrement:5,
+	readVal:6,
+	updateKey:7,
+	mifareProTest:8,
+};
+
+ var nRead =0;     //The count one card repeat find
+ var hasCard =false;
+ var isComOpen=false;
+ var icdev= -1;
+ var gl_sector = 2;
+ var gl_BinBlock = 8;
+ var gl_valBlock = 9;
+ var gl_romRWLen = 10;
+ var gl_romRWAddr = 0;
+ var gl_wantFunc =  0;
+
+//Link Reader
+function Connect()
+{
+	try{
+	if(isComOpen==false)          //if reader link failed
+	{
+		//alert("initialcom");
+	  obj.initialcom(100,115200);
+	}
+	}catch(e){alert(e.message);}
+
+	return;
+}
+
+// Find card
+function Findcard()
+{
+    obj.findcardStr(icdev,0);//1);     //1: multy card mode
+	gl_wantFunc = 0;
+}
+
+//Disconnect with reader
+function Disconnect()
+{
+	iRet = obj.exit(icdev);
+    isComOpen=false; //Set unlink status
+}
+
+$('#bindDiv').click(function(){
+	$('#bindCardNo').val('');
+	$('#msgs').val('');
+	Connect();
+ 	Findcard();
+ 	//Disconnect();
+});
+
+</script>
+{/block}
+{block name="script"}
+{/block}

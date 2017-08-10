@@ -1,0 +1,230 @@
+{extend name="public/base"/}
+{block name="style"}
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/bootstrap-editable.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/checkbox1.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/foodsell.css"/>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/extraCss.css">
+<script>
+$(function(){
+	$('#page-wrapper').css('paddingTop','20px');
+})
+</script>
+<script src="__PUBLIC__/js/interface.js"></script>
+<script src="__PUBLIC__/js/card.js"></script>
+{/block}
+{block name="header"}
+<div class="header cl">
+	<div class="head_left fl">
+		<!--<img class="fl" src="images/login.png">-->
+		<img class="fl" src="__PUBLIC__/images/ctlogo.png" style="margin-top: -12px;margin-left: -25px;">
+	</div>
+	<div class="head_right fr">
+		<a href="#">
+			<dl class="user">
+				<dt></dt>
+				<dd>个人中心</dd>
+			</dl>
+		</a>
+		<a href="#">
+			<dl class="shezhi">
+				<dt></dt>
+				<dd>系统设置</dd>
+			</dl>
+		</a>
+		<a href="{:url('admin/index/logout')}">
+			<dl class="exit">
+				<dt></dt>
+				<dd>退出</dd>
+			</dl>
+		</a>
+	</div>
+</div>
+{/block}
+{block name="body"}
+<div class="main-box clearfix">
+
+	<div class="main-box-body clearfix">
+		<div class="table-responsive clearfix">
+			<form method="post" name="form1" class="form form-horizontal" style="margin-right:0">
+				<div class="form-group" style="margin-top:20px;margin-right:0">
+					<div class="col-lg-10 col-sm-12" style="margin-bottom:20px;">
+						<div class="selbox" style="">请选择价格:</div>
+						<ul id="stulist">
+							<li class="col-lg-3 col-sm-5">
+								<input type="radio" id="radio-2-1" name="prices" class="regular-radio big-radio" value="15" checked="checked"/><label for="radio-2-1">
+								<img class="priceimg" src="/public/images/sale_icon1.png">
+								</label><div class="pricebox">15元/份</div>
+							</li>
+							<li class="col-lg-3 col-sm-5">
+								<input type="radio" id="radio-2-2" name="prices" class="regular-radio big-radio" value="20"/><label for="radio-2-2">
+								<img class="priceimg" src="/public/images/sale_icon2.png">
+								</label><div class="pricebox">20元/份</div>
+							</li>
+							<li class="col-lg-3 col-sm-5">
+								<input type="radio" id="radio-2-3" name="prices" class="regular-radio big-radio" value="30"/><label for="radio-2-3">
+								<img class="priceimg" src="/public/images/sale_icon3.png">
+								</label><div class="pricebox">30元/份</div>
+							</li>
+							<li class="col-lg-3 col-sm-5">
+								<input type="radio" id="radio-2-4" name="prices" class="regular-radio big-radio" value="40"/><label for="radio-2-4">
+								<img class="priceimg" src="/public/images/sale_icon4.png">
+								</label><div class="pricebox">40元/份</div>
+							</li>
+
+						</ul>
+					</div>
+					<div class="col-lg-10 col-sm-12">
+						<div class="selbox btop">请选择菜品:</div>
+						<ul id="stulist">
+							{volist name="cook" id="item"}
+							{php}
+							$images = get_cover($item['img']);
+							{/php}
+								<li data="{$item['foodname']}">
+									<input class="stus regular-checkbox" id="checkbox{$item['id']}" type="checkbox" name="pid[]" value="{$item['id']}"/>
+									<label for="checkbox{$item['id']}">
+									<img class="foodimg" src="{:config('base_url')}{$images['path']}">
+									<div class="fooddiv">{$item['foodname']}</div>
+									</label>
+								</li>
+							{/volist}
+						</ul>
+					</div>
+				</div>
+				<div class="form-group" style="margin-right:0">
+					<div class="col-lg-offset-1 col-lg-10">
+						<input type="hidden" name="classId" value="{$classes.id|default=''}">
+						<button class="btn btn-success submit-btn ajax-post" onclick="getOrder()" style="padding:6px 24px;">确 定</button>        
+						<div class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</div>
+					</div>
+				</div>
+			</form>
+
+		</div>
+	</div>
+</div>
+<div class="orderBox">
+	<div class="orderInnerBox">
+		<div style="font-size:20px;margin:20px; auto;text-align:center;">订单详情</div>
+		<table class="table" style="margin-top:20px;width:80%;margin-left:10%;background:#fff">
+				<tbody>
+				<tr>
+					<th>订单价格:</th>
+					<td><span class="disprice"></span><input type="hidden" class="subprice" value=""></td>
+				</tr>
+				<tr>
+					<th>订单菜品:</th>
+					<td><span class="disfood"></span><input type="hidden" class="subfood" value=""></td>
+				</tr>
+				<tr>
+					<th>操作人:</th>
+					<td><span class="disman">{$username|default=''}</span><input type="hidden" class="subman" value="{$userid|default=''}"></td>
+				</tr>
+				<tr>
+					<th>刷卡人:</th>
+					<td>
+						<input type="text" id="cardman">
+						<div class="help-block"><input type="hidden" class="form-control" style="background:#fff;border:0;" disabled id="msgs" value=""></div>
+					</td>
+				</tr>
+
+			</tbody>
+		</table>
+		<div style="font-size:20px;margin:0 auto;text-align:center;">
+			<button class="sub" onclick="sub()">确 认</button>
+			<button class="cancelOrder" onclick="cancelOrder()">取 消</button>
+		</div>
+	</div>
+</div>
+<script>
+$(function(){
+	var sWeight = document.body.clientWidth;
+	var sHeight = document.body.clientHidth;
+	$('.orderBox').css('width',sWeight);
+	$('.orderBox').css('height',sHeight);
+})
+function sub(){
+	var subprice = $('.subprice').val();
+	var subfood = $('.subfood').val();
+	var subman = $('.subman').val();
+	var cardman = $('#cardman').val();
+	if(!subprice){
+		$.messager.show('价格有误，请刷新后重试', {placement: 'center',type:'warning',time:3000});
+		return false;
+	}
+	if(!subfood){
+		$.messager.show('菜品有误，请刷新后重试', {placement: 'center',type:'warning',time:3000});
+		return false;
+	}
+	if(!subman){
+		$.messager.show('操作人有误，请刷新后重试', {placement: 'center',type:'warning',time:3000});
+		return false;
+	}
+	if(!cardman){
+		$.messager.show('请刷卡', {placement: 'center',type:'warning',time:2000});
+		$('#cardman').focus();
+		return false;
+	}
+
+    $.post('{:url('settlement')}',{subprice:subprice,subfood:subfood,subman:subman,cardman:cardman}, success, "json");
+    function success(data){
+		if(data.code == 1){
+			$.messager.show(data.msg, {placement: 'center',type:'success'});
+			setTimeout(function(){
+				window.location.href = data.url;
+			},2000);
+		} else {
+			$.messager.show(data.msg, {placement: 'center',type:'danger'});
+		}
+	}
+
+}
+function getOrder(){
+	if($('input[name="pid[]"]:checked').length == 0){
+		$.messager.show('请选择菜品', {placement: 'center',type:'warning',time:3000});
+		return false;
+	}
+	//console.log($('input[name="pid[]"]:checked'));
+	$('.orderBox').show();
+	$('#cardman').focus();
+	var disprice = $("input[name='prices']:checked").val()+'元/份';
+	$('.disprice').html(disprice);
+	$('.subprice').val($("input[name='prices']:checked").val());
+	getCheckboxValue();
+	getCard();
+}
+function cancelOrder(){
+	$('.orderBox').hide();
+	$('#cardman').val('');
+	clearInterval(timer);
+	Disconnect();
+}
+function getCheckboxValue(){
+	var chk_value = '';
+	var chk_title = '';
+	$('input[name="pid[]"]:checked').each(function(){
+		//alert($(this).siblings('label').children('.fooddiv').html());
+		chk_value += ','+$(this).val();
+		chk_title += ' '+$(this).siblings('label').children('.fooddiv').html();
+	})
+	$('.disfood').html(chk_title);
+	$('.subfood').val(chk_value);
+}
+function getCard(){
+ 	Findcards();
+ 	window.timer = setInterval('Findcards()',1000);
+}
+//读卡器初始化
+var msg = document.getElementById('msgs');
+var msgCardNO = document.getElementById('cardman');
+
+function Findcards()
+{
+	$('#msgs').val('');
+	Connect();
+    Findcard();
+}
+
+
+</script>
+{/block}

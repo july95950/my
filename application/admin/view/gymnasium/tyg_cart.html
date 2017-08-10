@@ -1,0 +1,277 @@
+{extend name="public/base"/}
+
+{block name="body"}
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/qlx.css"/>
+
+<script src="__PUBLIC__/js/tyg.js"></script>
+
+
+
+<div id="box">
+
+    <div id="content_box">
+
+        <div class="imfor_top">
+
+            <div class="check_top">
+
+                <input type="checkbox" id="all" />全选
+
+            </div>
+
+            <div class="pudc_top">商品</div>
+
+            <div class="pices_top">单价</div>
+
+            <div class="num_top">数量</div>
+
+            <div class="totle_top">小计</div>
+
+            <div class="del_top">操作</div>
+
+        </div>
+
+        {volist name="list" id="vo"}
+
+        <div class="imfor">
+
+
+
+            <div class="check">
+
+                <input type="checkbox" class="Each" />
+
+
+
+            </div>
+
+            <div class="pudc">{$vo.title}</span>
+
+            </div>
+
+            <div class="pices">{$vo.price}</div>
+
+            <input type="hidden" value="{$vo.id}">
+
+            <div class="num"><span class="reduc">&nbsp;-&nbsp;</span><input type="text" value="{$vo.count|default=0}" /><span class="add">&nbsp;+</span></div>
+
+            <div class="totle">{$vo.total|default=0}</div>
+
+            <div class="del">删除</div>
+
+        </div>
+
+
+
+        {/volist}
+
+
+
+    </div>
+
+    {if condition="empty($list)"}
+
+    暂无相关数据
+
+    {else/}
+
+    <div class="foot">
+
+        <div class="foot_add"><a href="{:url('gymnasium/delall')}"><button>清空购物车</button></a></div>
+
+        <div class="foot_del"><button>台房结算</button></div>
+
+
+
+        <div class="foot_cash" id="clear"><button>结算</button></div>
+
+        <div class="foot_tol"><span>合计：￥</span><span id="susum">0</span></div>
+
+    </div>
+
+
+
+    {/if}
+
+
+
+
+
+</div><br/>
+
+<div class="roomlist" style="margin-left:30%;width:60%;display:none;">
+
+    <!--<label class="col-lg-2 control-label">台房结算列表</label>-->
+
+    <div class="">
+
+        <select name="hide" id="s" class="form-control">
+
+            <option  selected = "selected" value="0">台房结算列表</option>
+
+            {if condition="empty($roomlist)"}无数据{else/}
+
+            {volist name="roomlist" id="vos"}
+
+            <option value="{$vos.id}" >{$vos.kk} -- {$vos.title}</option>
+
+            {/volist}
+
+            {/if}
+
+        </select>
+
+    </div>
+
+    <input id="sure" type="button" value="确定" />
+
+</div>
+
+<script>
+
+    $(function(){
+
+        var count=$("#susum").html();
+
+        $("#clear").click(function(){
+
+            layer.prompt(function(val, index){
+
+                if (val!=null && val!="")
+
+                {
+
+                    $.ajax({
+
+                        type: 'POST',
+
+                        url: "{:url('gymnasium/order')}",
+
+                        data: {'clear_card_id':val,'price':count},
+
+                        dataType: 'json',
+
+                        success: function (data) {
+
+                            // $(obj).parents("tr").remove();
+
+                            if(data == 1 ){
+
+                                layer.msg('订单成功!', {icon: 1, time: 1000});
+
+                            }else{
+
+                                layer.msg('订单失败!', {icon: 1, time: 1000});
+
+                            }
+
+
+
+                        },
+
+                        error: function (data) {
+
+                            console.log(data.msg);
+
+                        },
+
+                    });
+
+                }
+
+
+
+                layer.close(index);
+
+            });
+
+        })
+
+        $(".foot_del").click(function(){
+
+            $(".roomlist").toggle();
+
+        })
+
+        $("#sure").click(function(){
+
+            var id=$('#s option:selected').val();
+
+            if(id==0){
+
+                layer.msg('请选择房间', {icon: 1});
+
+                return false;
+
+            }
+
+//            layer.confirm('确认要绑定该台房吗？', {
+
+//                btn: ['确定','取消'] //按钮
+
+//            }, function(ss){
+
+//                //alert($('#s option:selected').val());
+
+//                layer.msg('绑定成功', {icon: 1});
+
+//            }, function(){
+
+//                layer.msg('已取消');
+
+//            });
+
+//            alert($('#s option:selected').val());
+
+
+
+            layer.confirm('确认要绑定该台房吗？', function () {
+
+                var count=$("#susum").html();
+
+                $.ajax({
+
+                    type: 'POST',
+
+                    url: "{:url('gymnasium/order')}",
+
+                    data: {'xid':id,'price':count},
+
+                    dataType: 'json',
+
+                    success: function (data) {
+
+                        //$(obj).parents("tr").remove();
+
+                        layer.msg('绑定成功!', {icon: 1, time: 1000});
+
+                    },
+
+                    error: function (data) {
+
+                        // console.log(data.msg);
+
+                        layer.msg('参数异常！请重试');
+
+                    },
+
+                });
+
+            });
+
+
+
+        })
+
+
+
+
+
+    })
+
+
+
+</script>
+
+{/block}

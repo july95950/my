@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>物业管理-出库管理</title>
+		<meta name="description" content="">
+		<meta name="keywords" content="">
+		<link href="__CSS__/cg_bootstrap.min.css" rel="stylesheet">
+		<link href="__CSS__/cg_style.css" rel="stylesheet">
+		<link href="__CSS__/cg_wystyle.css" rel="stylesheet">
+		<link rel="stylesheet" href="css/cg_page.css" />
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/foodsell.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/bootstrap/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/font-awesome.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/libs/nanoscroller.css"/>
+		<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/common.css"/>
+		<script src="__JS__/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+		<script src="__JS__/page.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+
+	<body>
+		<!-- 头部 -->
+		<div class="header cl">
+			<div class="head_left fl">
+				<!--<img class="fl" src="images/login.png">-->
+				<img class="fl" src="__IMG__/wygl_logo.png" style="margin-top: -12px;margin-left: -25px;">
+			</div>
+			<div class="head_right fr">
+				<a href="#">
+					<dl class="user">
+						<dt></dt>
+						<dd>个人中心</dd>
+					</dl>
+				</a>
+				<a href="#">
+					<dl class="shezhi">
+						<dt></dt>
+						<dd>系统设置</dd>
+					</dl>
+				</a>
+				<a href="#">
+					<dl class="exit">
+						<dt></dt>
+						<dd>退出</dd>
+					</dl>
+				</a>
+			</div>
+		</div>
+		<!-- 主题 -->
+		<div class="mainbody">
+			<!-- 主体左侧 -->
+			<div class="main_left_show">
+				<ul class="nav nav-pills nav-stacked">
+								{volist name="__menu__['child']" id="nav"}
+								<li class="nav-header hidden-sm hidden-xs">{$key}</li>
+								{volist name="nav" id="item"}
+								{if isset($item['_child'])}
+								<li class="{$item['style']}">
+									<a href="#" class="dropdown-toggle">
+										<i class="fa fa-{$item['icon']|default='file'}"></i>
+										<span>{$item['title']}</span>
+										<i class="fa fa-angle-right drop-icon"></i>
+									</a>
+									<ul class="submenu">
+										{volist name="item['_child']" id="vo" key="k"}
+										<li class="{$vo['style']}">
+											<a href="{$vo['url']|url}">
+												<i class="fa fa-{$vo['icon']|default='file'}"></i>
+												<span>{$vo['title']}</span>
+											</a>
+										</li>
+										{/volist}
+									</ul>
+								</li>
+								{else/}
+								<li class="{$item['style']}">
+									<a href="{$item['url']|url}" style="color: #FFFFFF">
+										<i class="fa fa-{$item['icon']|default='file'}"></i>
+										<span>{$item['title']}</span>
+									</a>
+								</li>
+								{/if}
+								{/volist}
+								{/volist}
+								
+							</ul>
+
+				<!-- <dl class="dls">
+					<a href="#">
+						<dt><img src="__IMG__/wy_flgl.png"></dt>
+						<dd>分类管理</dd>
+					</a>
+				
+				</dl>
+				<dl class="dls">
+					<a href="#">
+						<dt><img src="__IMG__/wy_rkgl.png"></dt>
+						<dd>入库管理</dd>
+					</a>
+				
+				</dl>
+				<dl class="dls">
+					<a href="#">
+						<dt><img src="__IMG__/wy_rkmx.png"></dt>
+						<dd>入库明细</dd>
+					</a>
+				
+				</dl>
+				<dl class="dls">
+					<a href="#">
+						<dt><img src="__IMG__/wy_ckgl.png"></dt>
+						<dd>出库管理</dd>
+					</a>
+				
+				</dl> -->
+
+			</div>
+			<!-- 主体右侧 -->
+			<div class="main_right">
+				<div class="main_con">
+					<div class="rcon_title">
+						您当前的位置：系统首页>物业管理>出库管理
+					</div>
+
+					<div class="xsqb_search">
+						<div class="search_icon_left">
+							<span>全部产品</span>
+							
+						</div>
+
+						<div class="search_icon_center">
+							<select name="className" id="class1" class="province_one">
+								<option value="">一级分类</option>
+								{volist name="classify1" id="item"}
+								<option value="{$item['id']}" {if condition="$info['classify_1'] eq $item['id']"}selected{/if}>{$item['title']}</option>
+								{/volist}
+								
+							</select>
+							<select class="province_two" id="class2">
+								
+							</select>
+							
+							<div class="search_icon_right">
+								<div class="rcon_search_ss cl">
+									<input type="text" name="title" placeholder="产品名称" id="se_title">
+									<div onclick="chaxun()" style="width: 57px;height: 36px;float: right;background: #c1a169;font-size: 14px;line-height: 36px;color: #fff;cursor: pointer;">查询</div>
+								</div>
+
+							</div>
+							
+						
+						</div>
+					</div>
+					
+
+				</div>
+				<!--<div style="clear: both"></div>-->
+				<div class="main_content_ct">
+					<table style="border: 1px solid #e5e5e5;width: 49.5%;float: left;">
+						<thead>
+							<tr class="wy_property">
+								<th class="wy_ckgl_id"><input type="checkbox" /><span>ID</span></th>
+								<th class="wy_ckgl_name">名称</th>
+								<th class="wy_ckgl_rkl">库存</th>
+								<th class="wy_ckgl_gg">规格</th>
+								<th class="wy_ckgl_caozuo">添加出库</th>
+
+							</tr>
+						</thead>
+						<tbody id="tbody">
+							{volist name="tree" id="list"}
+							<tr class="wy_property_top">
+								<td class="wy_ckgl_id_top">
+									<input type="checkbox" />
+									<span>{$list['id']}</span>
+								</td>
+								<td class="wy_ckgl_name_top">{$list['title']}</td>
+								<td class="wy_ckgl_rkl_top">{$list['num']}</td>
+								<td class="wy_ckgl_gg_top">{$list['spec']}</td>
+								<td class="wy_ckgl_caozuo_top">
+									<a href="javascript:void(0)" class="choice">出库</a>
+								</td>
+							</tr>
+							{/volist}
+						</tbody>
+					
+					</table>
+					
+					<table style="border: 1px solid #e5e5e5;width: 49.5%;float: right;" class="table_lqr">
+						<tbody>
+							<tr class="lqr">
+								<td>领取部门:</td>
+								<td>
+								<select name="className" id="department" class="form-control">
+									<option value="">领取部门</option>
+									{volist name="department" id="item"}
+									<option value="{$item['id']}">{$item['name']}</option>
+									{/volist}	
+								</select>
+								</td>
+								<td>领取人:</td>
+								<td><input type="text" name="create_time"  value="" id="out_person"></td>
+							</tr>
+							<tr class="lqr">
+								<td>领取时间:</td>
+								<td><input type="date" name="create_time"  value="" id="out_time"></td>
+							</tr>
+							
+							
+							<tr class="sc_library">
+								<td class="ct_library_name">商品名称</td>
+								<td class="ct_library_gg">规格</td>
+								<td class="ct_library_rkl">数量</td>
+								<td class="ct_library_caozuo">操作</td>
+							</tr>
+							
+						</tbody>
+					</table>
+					<table style="border: 1px solid #e5e5e5;width: 49.5%;float: right;" class="table_lqr">
+						<tbody id="tab-end">
+						</tbody>
+					</table>
+					
+					<div class="print_fy">
+						<div class="zzsc" style="float: left;margin-left: -5px;">
+							{$page}
+						</div>
+							<ul class="print">
+								<li class="pr_1"><a href="javascript:void(0)">打印</a></li>
+								<li class="pr_2"><a href="javascript:void(0)">取消</a></li>
+								<li class="pr_3"><a href="javascript:void(0)" onclick="submits()">出库</a></li>								
+							</ul>
+					</div>
+					
+					
+				</div>
+
+			</div>
+		</div>
+		<div class="orderBox">
+	<div class="orderInnerBox">
+		<div style="font-size:20px;margin:20px; auto;text-align:center;">出库</div>
+		<table class="table" style="margin-top:20px;width:80%;margin-left:10%;background:#fff">
+				<tbody>
+				<tr>
+					<th>出库产品:</th>
+					<td><input type="text" class="subprice" name="title" value="" id = "titles"></td>
+				</tr>
+				<tr>
+					<th>规格:</th>
+					<td><input type="text" class="subfood" name="spec" value="" id="specs"></td>
+				</tr>
+				<tr>
+					<th>数量:</th>
+					<td class="ends"><button onclick="min()">-</button><input type="num" class="subman" value="1" style="text-align: center" id="nums"><button onclick="add()">+</button></td>
+				</tr>
+				<input type="hidden" name="nums" value="" id="allNum">
+				<input type="hidden" name="ids" value="" id="ids">
+				
+
+			</tbody>
+		</table>
+		<div style="font-size:20px;margin:0 auto;text-align:center;">
+			<button class="sub" onclick="sub()">确 认</button>
+			<button class="cancelOrder" onclick="cancelOrder()">取 消</button>
+		</div>
+	</div>
+</div>
+		
+	</body>
+	<script type="text/javascript">
+		var bodyh = document.documentElement.clientHeight;
+		var mainh = bodyh - 105;
+		var mleft = document.getElementsByClassName('main_left')[0];
+		var mright = document.getElementsByClassName('main_right')[0];
+		mleft.style.height = mainh + 'px';
+		mright.style.height = mainh + 'px';
+		var liconpd = (mainh - 600) / 12;
+		var dls = document.getElementsByClassName('dls');
+		for(var i = 0; i < 7; i++) {
+			dls[i].style.paddingTop = liconpd + 'px';
+			dls[i].style.paddingBottom = liconpd + 'px';
+		}
+		window.onresize = function() {
+			var bodyh = document.documentElement.clientHeight;
+			var mainh = bodyh - 105;
+			var mleft = document.getElementsByClassName('main_left')[0];
+			var mright = document.getElementsByClassName('main_right')[0];
+			mleft.style.height = mainh + 'px';
+			mright.style.height = mainh + 'px';
+			var liconpd = (mainh - 600) / 12;
+			var dls = document.getElementsByClassName('dls');
+			for(var i = 0; i < 7; i++) {
+				dls[i].style.paddingTop = liconpd + 'px';
+				dls[i].style.paddingBottom = liconpd + 'px';
+			}
+		}
+	</script>
+
+	<!--计算页面可视化高度-->
+	<script type="text/javascript">
+		var body = $(window).height();
+		var mainbody = body - 105;
+		$(function() {
+			window.onload = $('.main_right').css({
+				'height': mainbody + 'px'
+			});
+		});
+	</script>
+
+	<script>
+		var chbAll = document.querySelector(
+			"thead th:first-child>input"
+		);
+		var chbs = document.querySelectorAll(
+			"tbody td:first-child>input"
+		);
+		chbAll.onclick = function() {
+			for(var i = 0; i < chbs.length; i++) {
+				chbs[i].checked = this.checked;
+			}
+		}
+		for(var i = 0; i < chbs.length; i++) {
+			chbs[i].onclick = function() {
+				if(!this.checked)
+					chbAll.checked = false;
+				else {
+					var unchecked =
+						document.querySelector(
+							"tbody td:first-child>input:not(:checked)"
+						);
+					if(unchecked === null)
+						chbAll.checked = true;
+				}
+			}
+		}
+	</script>
+	<script type="text/javascript">
+		 
+
+		//查询
+		function chaxun(){
+			var classfy = $('#class2').val();
+			var title = $('#se_title').val();
+			
+			$.post('{:url('find_product')}',{classfy:classfy,title:title},function(data){
+				if(data){
+					var htmls = '';
+					for(var i=0;i<data.length;i++){
+						htmls += '<tr class="wy_property_top"><td class="wy_ckgl_id_top"><input type="checkbox" name="id[]" value="'+data[i]['id']+'"/><span>'+data[i]['id']+'</span></td><td class="wy_ckgl_name_top">{$list['title']}</td><td class="wy_ckgl_rkl_top">'+data[i]['num']+'</td><td class="wy_ckgl_gg_top">'+data[i]['spec']+'</td><td class="wy_ckgl_caozuo_top"><a href="javascript:void(0)" class="choice" id="'+data[i]['id']+'" onclick="choices('+data[i]['id']+')">出库</a></td></tr>';
+					}
+					$('#tbody').html(htmls);	
+				}				
+				
+			})
+		}
+		window.onbeforeunload = function(){  
+		    var str1 = window.location.href;
+		    str1 = str1.substring(str1.lastIndexOf("/") + 1);
+		    var html1 = $('#tab-end').html();
+		    localStorage.setItem(str1,html1); 
+		}  
+		$('.choice').click(function(){
+			var title = $(this).parent().siblings('.wy_ckgl_name_top').html();
+			var spec = $(this).parent().siblings('.wy_ckgl_gg_top').html();
+			var num = $(this).parent().siblings('.wy_ckgl_rkl_top').html();
+			var ids = $(this).parent().siblings('.wy_ckgl_id_top').find('span').html();
+			//alert(title);
+			$('#titles').val(title);
+			$('#specs').val(spec);
+			$('#allNum').val(num);
+			$('#ids').val(ids);
+			$('.orderBox').show();
+		})
+		function choices(id){
+			//alert(id);
+			$.post('{:url('find_search')}',{id:id},function(data){
+				var title = data.title;
+				var spec = data.spec;
+				var num = data.num;
+				var ids = data.id;
+				$('#titles').val(title);
+				$('#specs').val(spec);
+				$('#allNum').val(num);
+				$('#ids').val(ids);
+				$('.orderBox').show();
+			})
+		}
+		function cancelOrder(){
+			$('.orderBox').hide();
+		}
+
+		function min(){
+			var num1 = $('#nums').val();
+			var num_min = num1 - 1;
+			$('#nums').val(num_min);
+			if($('#nums').val() <= 1){
+				$('#nums').val(1);
+			}
+		}
+		function add(){
+			
+			var t=$('#nums');   
+	        t.val(parseInt(t.val())+1);  
+			var allNum = $('#allNum').val();
+
+			if(t.val() >= parseInt(allNum)){
+				t.val(allNum);
+			}
+		}
+
+		function sub(){
+			var title = $('#titles').val();
+			var spec = $('#specs').val();
+			var nums = $('#nums').val();
+			var allNum = $('#allNum').val();
+			var ids = $('#ids').val();
+			var items = $('.sc_library_top');
+			var html = '<tr class="sc_library_top" id="xuanze'+ids+'"><td class="ct_library_name_top">'+title+'</td><td class="ct_library_gg_top">'+spec+'</td><td class="ct_library_rkl_top"><div class="gw_num_up"><input type="text" value="'+nums+'" class="number" style="width: 30px;"/></div></td><td class="ct_library_caozuo_top" onclick="dels('+ids+')">删除</td></tr>';
+			
+			if(items.length >=1){
+
+				$('.sc_library_top:last-child').after(html);
+
+				items.each(function(index){
+					var titles = items.eq(index).find('.ct_library_name_top').html();
+					if(items.eq(index).find('.ct_library_name_top').html() == title){
+						var num = parseInt(items.eq(index).find('.ct_library_rkl_top').find('.gw_num_up').find('.number').val()) + parseInt(nums);
+						items.eq(index).find('.ct_library_rkl_top').find('.gw_num_up').find('.number').val(num);
+						$('.sc_library_top:last-child').remove();
+						$('.orderBox').hide();
+					}
+				})	
+
+			}else{
+
+				$('#tab-end').append(html);
+			}
+			
+			$('.orderBox').hide();
+		}
+
+		function remove_all(){
+			var all = $('.sc_library_top');
+			if(all.length >=1){
+				all.each(function(index){
+					all.eq(index).remove();
+				})
+			}
+			
+		}
+		function dels(index){
+			$('#xuanze'+index).remove();
+		}
+		function submits(){
+			var person = $('#out_person').val();
+			var time = $('#out_time').val();
+			var department = $('#department').val();
+			var sub_item = $('.sc_library_top');
+			var title =new Array();
+			var num =new Array();
+			var spec =new Array();
+			if(!department || !person){
+				alert('请补全资料');
+				return false;
+			}
+			sub_item.each(function(index){
+				title.push(sub_item.eq(index).find('.ct_library_name_top').html());
+				num.push(sub_item.eq(index).find('.ct_library_rkl_top').find('.gw_num_up').find('.number').val());
+				spec.push(sub_item.eq(index).find('.ct_library_gg_top').html());
+			})
+			JSON.stringify(title);
+			JSON.stringify(num);
+			JSON.stringify(spec);
+			console.log(title);
+			console.log(num);
+			console.log(spec);
+			console.log(person);
+			console.log(time);
+			console.log(department);
+			$.post('{:url('out_storages')}',{title:title,num:num,spec:spec,person:person,time:time,department:department},function(data){
+				//console.log(data);
+				if(data.code == -1){
+					alert(data.title+data.msg);
+				}else if(data.code == 1 && data.info == 1){
+					alert(data.msg);
+					remove_all();
+					clear();
+				    function clear(){
+						if(confirm("要打印小票吗？"))
+						return true;
+						if(true){
+							location.href="{:url('')}";
+						}
+					}
+
+				}
+			})
+
+		}
+	</script>
+	<script type="text/javascript">
+		$(function(){
+			var sWeight = document.body.clientWidth;
+			var sHeight = document.body.clientHidth;
+			$('.orderBox').css('width',sWeight);
+			$('.orderBox').css('height',sHeight);
+
+			var str1 = window.location.href;
+			str1 = str1.substring(str1.lastIndexOf("/") + 1);
+			var h1 = localStorage.getItem(str1);
+			$('#tab-end').html(h1);
+
+			$('#class1').change(function(){
+				$('#classify2_id').html('');
+				var id = $(this).val();
+				$.post("{:url('inventory/find_classily')}",{id:id},function(data){
+					//console.log(data);
+					var html = '';
+					var htmls = '';
+					for(var i=0;i<data.length;i++){
+						html += '<option value="'+data[i]['title']+'" {if condition="$info['pid'] eq $item['id']"}selected{/if}>'+data[i]['title']+'</option>';
+						htmls += '<input type="hidden" name="sid" value="'+data[i]['id']+'" id="classify2_id">';
+					}
+					$('#class2').html(html);
+		       		$('#choice_c').append(htmls);
+		       		//alert($('#classify2_id').val());
+		      	});
+			})
+		})
+		
+	</script>
+		
+</html>

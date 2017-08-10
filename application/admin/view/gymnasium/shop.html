@@ -1,0 +1,89 @@
+{extend name="public/base"/}
+{block name="body"}
+<form action="{:url('shop')}" method="post" class="form form-horizontal">
+    <div style="text-align:center;">
+        <span id="button4" style="margin-right:30px;"><input type="radio" name="status" id="male3" value="0" {if condition="$status eq 0"}checked{/if}><label for="male3" style="color:orange;font-size:20px;">全部</label></span>
+        <span id="button1" style="margin-right:30px;"><input type="radio" name="status" id="male" value="56" {if condition="$status eq 56"}checked{/if}><label for="male" style="color:green;font-size:20px;">饮料</label></span>
+        <span id="button2" style="margin-right:30px;"><input type="radio" name="status" id="male1" value="59" {if condition="$status eq 59"}checked{/if}><label for="male1" style="color:red;font-size:20px;">食品</label></span>
+        <span id="button3" style="margin-right:30px;"><input type="radio" name="status" id="male2" value="62" {if condition="$status eq 62"}checked{/if}><label for="male2" style="color:orange;font-size:20px;">其他</label></span>
+        <input type="text" name="names" value="{$title}" placeholder="请输入商品名称查询" />
+        <input type="submit" value="搜索">
+    </div>
+</form>
+<div class="main-box-body clearfix">
+    <!-- 表格列表 -->
+    <div class="table-responsive clearfix">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <!--<th width="30"><input class="checkbox check-all" type="checkbox"></th>-->
+                <th width="60">序号</th>
+                <th>名称</th>
+                <th width="120">单价</th>
+                <th width="120">余量</th>
+                <th width="120">数量选择</th>
+                <th>购买</th>
+            </tr>
+            </thead>
+            <tbody>
+            {volist name="list" id="list"}
+            <tr>
+                <!--<td><input class="ids row-selected" type="checkbox" name="id[]" value="{$list.id}"></td>-->
+                <td class="xh">{$list['id']}</td>
+                <td>
+
+                    <a href="#" class="editable editable-click" data-id="{$list['id']}" data-name="title" data-type="text" data-pk="{$list['id']}" data-url="{:url('editable')}">{$list['title']}</a>
+
+                </td>
+                <td><a href="#" class="editable editable-click" data-id="{$list['id']}" data-name="sort" data-type="text" data-pk="{$list['id']}" data-url="{:url('editable')}">{$list['out_price']}元</a></td>
+                <td class="nmu" value="{$list['num']}">{$list['num']}</td>
+                <td><div class="num"><span class="reduc">&nbsp;-&nbsp;</span><input class="nums" type="text" value="0" size="5"/><span class="add">&nbsp;+ </span></div></td>
+                <td >
+                    <a title="购物" class="cart" data-id="{$list['id']}" >添加到购物车</a>
+
+                </td>
+            </tr>
+            {/volist}
+
+            </tbody>
+        </table>
+    </div>
+    {if condition="empty($list['id'])"}该商品暂无{/if}
+    {$page}
+    <!-- /表格列表 -->
+</div>
+<script>
+    $(function() {
+        $(".cart").click(function(){
+            var counts=$(this).parent().prev().children().children().next().val();
+            var xh=$(this).attr('data-id');
+            var status = 1;
+            location.href="__HOME__/gymnasium/cart?goods_id="+xh+"&count="+counts+"&status="+status;
+        });
+        //加
+        $(".add").each(function() {
+            $(this).click(function() {
+                var $multi = 0;
+                var vall = $(this).prev().val();
+                vall++;
+                $(this).prev().val(vall);
+            });
+        });
+        //减
+        $(".reduc").each(function() {
+            $(this).click(function() {
+                var $multi1 = 0;
+                var vall1 = $(this).next().val();
+                vall1--;
+                if(vall1 <= 1) {
+                    vall1 = 1;
+                }
+                $(this).next().val(vall1);
+
+            });
+
+        });
+    });
+
+</script>
+{/block}

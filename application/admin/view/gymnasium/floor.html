@@ -1,0 +1,59 @@
+{extend name="public/base"/}
+
+{block name="body"}
+
+<form action="{:url()}" method="post" class="form form-horizontal">
+
+    <div style="text-align:center;">
+
+        <span id="button1" style="margin-right:30px;"><input type="radio" name="status" id="male" value="1" checked><label for="male" style="color:green;font-size:20px;">空闲</label></span>
+
+        <!--<span id="button2" style="margin-right:30px;"><input type="radio" name="status" id="male1" value="0" ><label for="male1" style="color:red;font-size:20px;">使用中</label></span>-->
+
+        <span id="button3" style="margin-right:30px;"><input type="radio" name="status" id="male2" value="2" ><label for="male2" style="color:orange;font-size:20px;">预留</label></span><br/>
+
+    </div>
+
+    <div>
+
+        <ul>
+
+            {volist name="list" id="vo"}
+
+            <a href="{:url('clear?id='.$vo['id'].'&ss='.$vo['ss'])}">
+
+                <li style="display:block;width:200px;height:200px;background-color:#AB82FF;float:left;margin-right:50px;">
+
+                    <div style="text-align: center;padding:50px;">
+
+                        <span style="font-size:18px;color:#B03060;font-weight:bold;padding:10px;">{$vo.kk}</span><br/>
+
+                        <span style="font-size:18px;color:#B03060;font-weight:bold;padding:10px;">{$vo.title}</span><br/>
+
+                    </div>
+
+                </li>
+
+            </a>
+
+            {/volist}
+
+            {if condition="empty($list)"} 暂无相关数据{/if}
+
+        </ul>
+
+        <input type="hidden" name="id"  id="ids" value="{$fid|default=''}">
+
+    </div>
+
+</form>
+
+<script>
+
+
+
+
+
+</script>
+
+{/block}

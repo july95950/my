@@ -1,0 +1,27 @@
+{volist name="list1" id="item"}
+<tr id="tr{$item['id']}">
+	<td>{$item['id']}</td>
+	<td>{$item['outercard']}</td>
+	<td>
+		{if $item['vip'] eq '00'}
+		<span class="label label-info">普通卡</span>
+		{elseif $item['vip'] eq '01'}
+		<span class="label label-warning">贵宾卡</span>
+		{/if}
+	</td>
+	<td>
+		{if $item['status'] eq 0}
+		<span class="label label-danger">预制</span>
+		{elseif $item['status'] eq 1}
+		<span class="label label-primary">已关联</span>
+		{else /}
+		<span class="label label-primary">已绑定</span>
+		{/if}
+	</td>
+	<td class="innertd"><input type="text" disabled class="innercard form-control" value="{$item['innercard']}"></td>
+	<td>
+		<a class="badge badge-danger" style="padding:6px;color:#fff;" onclick="if(confirm('确定删除?')==false)return false;" href="{:url('makeCardDelete?id='.$item['id'])}">删 除</a>
+	</td>
+	<td>{$item['addtime']|date='Y-m-d',###}</td>
+</tr>
+{/volist}

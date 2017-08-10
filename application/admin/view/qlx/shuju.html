@@ -1,0 +1,68 @@
+{extend name="public/base"/}
+
+{block name="body"}
+<script type="text/javascript" src="__PUBLIC__/js/echarts.min.js"></script>
+
+<div id="main"  class="main21" style="color:red;width:700px;height:700px"></div>
+
+
+
+<script>
+
+
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('main'));
+
+    // 指定图表的配置项和数据
+    var option = {
+        title : {
+            text: '包房空闲占比',
+            subtext: '企业数据统计',
+            x:'center'
+        },
+
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'right',
+            data:['食品生产企业','食品流通单位','食品生产小作坊'],
+
+        },
+
+        series : [
+            {
+                name: '企业数量',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:[
+                    {value:11, name:'大包房位置数量'},
+    {value:22, name:'小包房位置数量'},
+                    {value:22, name:'大厅位置数量'},
+    ],
+
+    itemStyle:{
+        normal:{
+            label:{
+                show: true,
+                        formatter: '{b} : {c} ({d}%)'
+            },
+            labelLine :{show:true}
+        }
+    }
+
+    }
+    ]
+    };
+
+
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+</script>
+
+
+
+{/block}

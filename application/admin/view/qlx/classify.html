@@ -1,0 +1,68 @@
+{extend name="public/qlxbase" /}
+{block name="main"}
+<div class="mainbody" style="height:800px">
+    <div class="main_right main-box clearfix">
+        {include file="public/qlxleft" /}
+        <header class="main-box-header clearfix">
+            <div class="pull-left">
+                <h2>{$meta_title}</h2>
+            </div>
+
+        </header>
+    <div class="main-box-body clearfix">
+        <div class="tabs-wrapper">
+            <ul class="nav nav-tabs">
+
+                <li class="active">
+                    <a href="{:url('qlx/classify')}">一级分类</a>
+                </li>
+                <li class="">
+                    <a href="{:url('qlx/classifys')}">二级分类</a>
+                </li>
+
+            </ul>
+            <form action="" class="form" method="post">
+                <table class="table table-striped">
+                    <!-- <thead>
+                        <tr>
+                            <th class="col-lg-2 text-right">分组</th>
+                            <th>权限</th>
+                        </tr>
+                    </thead> -->
+                    <tbody>
+                    <tr>
+                        <td class="info col-lg-2 text-right">分类名称</td>
+                        <td class="col-lg-10 text-left">
+                            {volist name="list" id="item"}
+
+                            <input type="checkbox" name="id[]" value="{$item['id']}" {if in_array($item['id'],$classify1)}checked{/if}>
+                            <label>{$item['title']}</label>
+
+                            {/volist}
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="form-group">
+                    <div class="col-lg-offset-2 col-lg-10">
+                        <!--btn btn-success submit-btn ajax-post" target-form="form-->
+                        <button type="submit" class="">确认提交</button>
+                        <button class="btn btn-danger btn-return" onclick="javascript:history.back(-1);return false;">返 回</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="script"}
+<script type="text/javascript" src="__PUBLIC__/js/bootstrap-editable.min.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $.fn.editable.defaults.mode = 'popup';
+        $.fn.editableform.buttons = '<button type="submit" class="btn btn-success editable-submit btn-mini"><i class="fa fa-check-square-o fa-white"></i></button>' +
+                '<button type="button" class="btn editable-cancel btn-mini"><i class="fa fa-times"></i></button>';
+        $('.editable').editable();
+    })
+</script>
+{/block}

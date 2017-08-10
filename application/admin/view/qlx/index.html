@@ -1,0 +1,164 @@
+{extend name="public/qlxbase" /}
+{block name="main"}
+<!-- 头部 -->
+
+<!-- 主题 -->
+<div class="mainbody">
+    <!-- 主体左侧 -->
+
+    {include file="public/qlxleft" /}
+
+    <!-- 主体右侧 -->
+    <div class="main_right">
+        <div class="main_con">
+            <div class="rcon_title">
+                您当前的位置：系统首页>棋乐轩>开台列表页>开台
+            </div>
+
+        </div>
+        <div style="clear: both"></div>
+        <div class="main_kaitai">
+
+
+            <div class="baofang_list">
+
+                <!--包房-->
+                {volist name="list" id="vo"}
+                <div class="baofangs">
+                    <dl>
+                        <dt><img src="{$vo.img}" alt=""/></dt>
+                        <dd>
+                            <b>{$vo.title}</b>
+                            <p class="p1">收费标准：{$vo.price}元/每小时</p>
+                            <p class="p2">注：{$vo.groups}</p>
+                        </dd>
+                    </dl>
+                    <ul class="{if condition='empty($meta)'}baof_list{else/}baof_lists{/if} lihover2" onmouseover="javascript:lihover(2);">
+                        <li class="li1">
+                            <b>{$vo.cc}</b>
+                            <p>总台数</p>
+                            <a href="#"><img src="__PUBLIC__/images/yj/zongshu.gif" alt=""/><span>总数</sppan></a>
+                        </li>
+                        {if condition="empty($meta)"}
+                        <li class="li2">
+                            <b>{$vo.kx}</b>
+                            <p>总台数</p>
+                            <a href="{:url('qlx/floor',array('id'=>$vo['id'],'ss'=>$vo['ss']))}"><img src="__PUBLIC__/images/yj/kongxian.gif" alt=""/><span>空闲</sppan></a>
+                        </li>
+                        {else /}
+                        <li class="li2">
+                            <b>{$vo.sy}</b>
+                            <p>总台数</p>
+                            <a href="{:url('qlx/floor',array('id'=>$vo['id'],'ss'=>$vo['ss']))}"><img src="__PUBLIC__/images/yj/kongxian.gif" alt=""/><span>使用</sppan></a>
+                        </li>
+                        {/if}
+                        <li class="li3">
+                            <b>{$vo.yl}</b>
+                            <p>总台数</p>
+                            <a href="{:url('qlx/floor',array('id'=>$vo['id'],'ss'=>2))}"><img src="__PUBLIC__/images/yj/yuding.gif" alt=""/><span>预定</sppan></a>
+                        </li>
+                    </ul>
+                </div>
+                {/volist}
+                <!--大厅-->
+
+            </div>
+
+        </div>
+        <div style="clear: both"></div>
+        <!--结算-->
+        {if condition="!empty($meta)"}
+        <div class="jiesuan">
+
+                <div class="rcon_jiesuan cl">
+                    <span>卡号：</span>
+                    <input id="cardtel" type="text" name="">
+                    <button id="cardsure">结算</button>
+                </div>
+
+        </div>
+        {/if}
+    </div>
+</div>
+<script>
+    $("#cardsure").click(function () {
+        var num = $('#cardtel').val();
+        if ($("#cardtel").length > 0) {
+            if (num <= 0 || isNaN(num) || num.length <= 4) {
+                layer.msg('请提交正确的结算卡号!', {icon: 1, time: 2000});
+                return false;
+            }
+            $.ajax({
+                type: 'POST',
+                url: "{:url('qlx/ajaxindex')}",
+                data: {'cardid': num},
+                dataType: 'json',
+                success: function (data) {
+                    if(data==0){
+                        layer.msg('数据不存在!', {icon: 1, time: 2000});
+                        return false;
+                    }
+                    if(data==1){
+
+                        layer.msg('数据可查询，等待跳转!', {icon: 1, time: 2000});
+//                        location.href="{:url('floor',array('ss'=>'clear','create_card_id'=>"+num+"))}";
+                        location.href="/admin/qlx/floor/?ss=clear&&create_card_id="+num+"";
+//                        return false;
+                    }
+//                    layer.msg('查询成功!', {icon: 1, time: 2000});
+//                    //var anObject = {one: 1, two: 2, three: 3};//对json数组each
+//                    var strhtml = "<ul class='artDialogDiv'>";
+//                    $.each(data, function (name, value) {
+//                        strhtml += "<li>" + value + " <a href='/admin/qlx/clear/?id="+name+"&&ss=clear'>查看</a> </li>";
+//                    });
+//
+//                    strhtml += "</ul>";
+//                    // return strhtml;
+//                    $("#addstr").html(strhtml);
+
+                },
+                error: function (data) {
+                    layer.msg('参数异常!', {icon: 1, time: 1000});
+                    console.log(data.msg);
+                },
+            });
+        }
+    })
+</script>
+<script type="text/javascript">
+    var bodyh=document.documentElement.clientHeight;
+    var mainh=bodyh-105;
+    var mleft=document.getElementsByClassName('main_left')[0];
+    var mright=document.getElementsByClassName('main_right')[0];
+    mleft.style.height=mainh+'px';
+    mright.style.height=mainh+'px';
+    var liconpd=(mainh-600)/12;
+    var dls=document.getElementsByClassName('dls');
+    for (var i = 0; i < 7; i++){
+        dls[i].style.paddingTop=liconpd+'px';
+        dls[i].style.paddingBottom=liconpd+'px';
+    }
+    window.onresize = function(){
+        var bodyh=document.documentElement.clientHeight;
+        var mainh=bodyh-105;
+        var mleft=document.getElementsByClassName('main_left')[0];
+        var mright=document.getElementsByClassName('main_right')[0];
+        mleft.style.height=mainh+'px';
+        mright.style.height=mainh+'px';
+        var liconpd=(mainh-600)/12;
+        var dls=document.getElementsByClassName('dls');
+        for (var i = 0; i < 7; i++){
+            dls[i].style.paddingTop=liconpd+'px';
+            dls[i].style.paddingBottom=liconpd+'px';
+        }
+    }
+</script>
+<!--计算页面可视化高度-->
+<script type="text/javascript">
+    var body =$(window).height();
+    var mainbody= body-105;
+    $(function(){
+        window.onload = $('.main_right').css({'height':mainbody+'px'});
+    });
+</script>
+{/block}
